@@ -1,0 +1,10 @@
+.cell {
+    display: inline-block;
+    width: 1ch;
+}
+
+.term {
+    font-family: "Roboto Mono", monospace;
+    background-color: var(--c-0);
+    color: var(--c-15);
+}
