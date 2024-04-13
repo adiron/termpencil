@@ -54,3 +54,29 @@ export function setBufferChar(
 ): Buffer {
     return setBufferRange(buffer, index, [char], [fgColor], [bgColor]);
 }
+
+export function bufferToEscapeSequence(buffer: Buffer): string {
+    // Convert a buffer to an ANSI escape sequence readable by xterm.js
+    let escapeSequence = "";
+    let currentFgColor = -1;
+    let currentBgColor = -1;
+    for (let i = 0; i < buffer.charData.length; i++) {
+        if (buffer.fgColor[i] !== currentFgColor) {
+            const fgColor = buffer.fgColor[i];
+            if (typeof fgColor === "number") {
+                escapeSequence += `\x1b[38;5;${buffer.fgColor[i]}m`;
+                currentFgColor = buffer.fgColor[i];
+            }
+        }
+        if (buffer.bgColor[i] !== currentBgColor) {
+            const bgColor = buffer.bgColor[i];
+            if (typeof bgColor === "number") {
+                escapeSequence += `\x1b[48;5;${buffer.bgColor[i]}m`;
+                currentBgColor = buffer.bgColor[i];
+            }
+        }
+        escapeSequence += buffer.charData[i];
+    }
+
+    return escapeSequence;
+}
