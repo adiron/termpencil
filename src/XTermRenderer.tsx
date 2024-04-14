@@ -1,12 +1,13 @@
 import { Terminal } from '@xterm/xterm';
 import "@xterm/xterm/css/xterm.css";
-import { Buffer, bufferToEscapeSequence } from './Buffer';
 import { useEffect, useRef, useState } from 'react';
 
 function XTermRenderer({
-    buffer,
+    data,
+    cursorPosition,
 }: {
-    buffer: Buffer,
+    data: string,
+    cursorPosition: [number, number],
 }) {
     const xterm = useRef<HTMLDivElement>(null);
     const [terminalObject, setTerminalObject] = useState<Terminal | null>(null);
@@ -29,8 +30,10 @@ function XTermRenderer({
             return;
         }
         terminalObject.clear();
-        terminalObject.write(bufferToEscapeSequence(buffer));
-    }, [buffer, terminalObject]);
+        terminalObject.write(data);
+        // Set cursor position by using the CSI escape sequence
+        terminalObject.write(`\x1b[${cursorPosition[0]};${cursorPosition[1]}H`);
+    }, [cursorPosition, data, terminalObject]);
 
     return (
         <div id="xterm" ref={xterm}>
