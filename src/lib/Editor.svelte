@@ -6,11 +6,15 @@
     type ScreenBuffer,
   } from "./screenbuffer";
 
+  type Tool = "cursor" | "brush";
+
   interface Props {
     buffer: ScreenBuffer;
     charSize: [number, number];
     palette: string[];
   }
+
+  const tool : Tool = $state("cursor");
 
   const { buffer = $bindable(), charSize, palette }: Props = $props();
 
@@ -23,6 +27,13 @@
   let caret: number | null = $state(null);
   let hoverTarget: number | null = $state(null);
 
+  const charUnderCaret = $derived(caret === null ? null : buffer.chars[caret]);
+  const [caretX, caretY] = $derived(
+    caret === null
+      ? [null, null]
+      : [caret % buffer.width, Math.floor(caret / buffer.width)],
+  );
+
   function moveSelect(n: number) {
     caret = (caret! + n) % buffer.chars.length;
     if (caret < 0) {
@@ -31,25 +42,31 @@
   }
 
   function shiftColor(which: "fg" | "bg", by: number) {
-    const idx = caret!;
-    const x = idx % buffer.width;
-    const y = Math.floor(idx / buffer.width);
-    const curChar = getCharAt(buffer, x, y);
-    const curCol = curChar[which];
+    if (!charUnderCaret) {
+      return;
+    }
+    const curCol = charUnderCaret[which];
     if (typeof curCol === "number") {
-      buffer.chars[idx][which] = (curCol + by) % palette.length;
+      charUnderCaret[which] = (curCol + by) % palette.length;
     }
     if (curCol === undefined) {
-      buffer.chars[idx][which] = 0;
+      charUnderCaret[which] = 0;
     }
   }
 
-  function handleMouseOver(idx: number) {
+  function cellMouseOver(idx: number) {
     hoverTarget = idx;
   }
 
-  function handleMouseClick(idx: number) {
-    caret = idx;
+  function cellMouseClick(idx: number) {
+    switch (tool) {
+      case "cursor":
+        caret = idx;
+        break;
+      case "brush":
+        // TODO: Implement
+        break;
+    }
   }
 
   function handleKey(e: KeyboardEvent) {
@@ -104,14 +121,9 @@
       !e.getModifierState("Alt") &&
       !e.getModifierState("Meta") &&
       e.key.length === 1 &&
-      caret !== null
+      charUnderCaret !== null
     ) {
-      const x = caret % buffer.width;
-      const y = Math.floor(caret / buffer.width);
-      setCharAt(buffer, x, y, {
-        ...getCharAt(buffer, x, y),
-        codepoint: e.key.codePointAt(0) || null,
-      });
+      charUnderCaret.codepoint = e.key.codePointAt(0) || null;
       moveSelect(1);
       e.preventDefault();
       return;
@@ -130,71 +142,88 @@
   style:--width={charSize[0]}
   style:--height={charSize[1]}
   style={styleString}
+  class="wrapper"
 >
-  <div class="display">
-    {#each { length: getRowCount(buffer) }, rowI}
-      <div class="row">
-        {#each { length: buffer.width }, colI}
-          {@const idx = colI + rowI * buffer.width}
-          {#if idx <= buffer.chars.length}
-            {@const styledChar = getCharAt(buffer, colI, rowI)}
-            <!-- svelte-ignore a11y_no_static_element_interactions -->
-            <!-- svelte-ignore a11y_mouse_events_have_key_events -->
-            <div
-              class={{
-                cell: true,
-                "cell--selected": idx === caret,
-                [`cell--fg-${styledChar.fg}`]:
-                  typeof styledChar.fg === "number",
-                [`cell--bg-${styledChar.bg}`]:
-                  typeof styledChar.bg === "number",
-              }}
-              onmouseover={() => handleMouseOver(idx)}
-              onmousedown={() => handleMouseClick(idx)}
-            >
-              {#if styledChar.codepoint !== null}
-                {String.fromCodePoint(styledChar.codepoint)}
-              {:else}
-                &nbsp;
-              {/if}
-            </div>
-          {/if}
-        {/each}
-      </div>
-    {/each}
+  <div class="display-wrapper">
+    <div class="display">
+      {#each { length: getRowCount(buffer) }, rowI}
+        <div class="row">
+          {#each { length: buffer.width }, colI}
+            {@const idx = colI + rowI * buffer.width}
+            {#if idx <= buffer.chars.length}
+              {@const styledChar = getCharAt(buffer, colI, rowI)}
+              <!-- svelte-ignore a11y_no_static_element_interactions -->
+              <!-- svelte-ignore a11y_mouse_events_have_key_events -->
+              <div
+                class={{
+                  cell: true,
+                  "cell--selected": idx === caret,
+                  [`cell--fg-${styledChar.fg}`]:
+                    typeof styledChar.fg === "number",
+                  [`cell--bg-${styledChar.bg}`]:
+                    typeof styledChar.bg === "number",
+                }}
+                onmouseover={() => cellMouseOver(idx)}
+                onmousedown={() => cellMouseClick(idx)}
+              >
+                {#if styledChar.codepoint !== null}
+                  {String.fromCodePoint(styledChar.codepoint)}
+                {:else}
+                  &nbsp;
+                {/if}
+              </div>
+            {/if}
+          {/each}
+        </div>
+      {/each}
+    </div>
   </div>
 
-  <div class="info">
+  <div class="tools">
     <div class="palette-preview palette-preview--fg">
-      {#each {length:  palette.length},i }
-        <div
+      {#each { length: palette.length }, i}
+        <button
+          aria-label={`Set foreground to ${i}`}
           class={{
-            "cell": true,
+            cell: true,
             [`cell--fg-${i}`]: true,
-          }}>
+            "cell--selected": charUnderCaret && charUnderCaret.fg === i,
+          }}
+          onclick={() => {
+            if (caret !== null) {
+              buffer.chars[caret].fg = i;
+            }
+          }}
+        >
           @
-        </div>
+        </button>
       {/each}
     </div>
 
     <div class="palette-preview palette-preview--bg">
-      {#each {length:  palette.length},i }
-        <div
+      {#each { length: palette.length }, i}
+        <button
+          aria-label={`Set background to ${i}`}
           class={{
-            "cell": true,
+            cell: true,
             [`cell--bg-${i}`]: true,
-          }}>
+            "cell--selected": charUnderCaret && charUnderCaret.bg === i,
+          }}
+          onclick={() => {
+            if (caret !== null) {
+              buffer.chars[caret].bg = i;
+            }
+          }}
+        >
           &nbsp;
-        </div>
+        </button>
       {/each}
     </div>
   </div>
-  <div class="stateIndicator">
+  <div class="status">
     {#if caret !== null}
       <span class="state state__select">
-        selecting: {caret % buffer.width},{Math.floor(
-          caret / buffer.width,
-        )} ({caret})
+        caret: {caretX},{caretY} ({caret})
       </span>
     {:else}
       <span class="state state__select state__select--empty">
@@ -212,9 +241,26 @@
 </div>
 
 <style lang="scss">
+  .wrapper {
+    display: grid;
+    grid-template-areas:
+      "display tools"
+      "status status";
+    grid-template-columns: 1fr 300px;
+  }
+  .display-wrapper {
+    grid-area: display;
+    padding: 2rem;
+  }
   .display {
     outline: 1px solid aliceblue;
     display: inline-block;
+  }
+  .tools {
+    grid-area: tools;
+  }
+  .status {
+    grid-area: status;
   }
   .row {
     display: table-row;

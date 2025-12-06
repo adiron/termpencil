@@ -8,7 +8,7 @@
 
 <main>
   <div>
-    <Editor palette={DEFAULT_PALETTE} bind:buffer={buffer} charSize={[ 8,16 ]} />
+    <Editor palette={DEFAULT_PALETTE} bind:buffer={buffer} charSize={[ 10,18 ]} />
   </div>
 </main>
 

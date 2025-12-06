@@ -6,3 +6,15 @@ body {
   color: white;
   font-family: 'Courier New', Courier, monospace;
 }
+
+button {
+  appearance: inherit;
+  background: inherit;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  border: inherit;
+  display: block;
+  padding: inherit;
+  padding: inherit;
+}
