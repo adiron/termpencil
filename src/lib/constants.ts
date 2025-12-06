@@ -1,4 +1,3 @@
-export type Tool = "cursor" | "brush";
 
 export const DEFAULT_PALETTE = [
   "#000000",

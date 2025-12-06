@@ -1,6 +1,9 @@
 <script lang="ts">
   import { getCharAt, getRowCount } from "./screenbuffer";
   import { globalState } from "./state.svelte";
+  import { CursorTool } from "./tools/CursorTool";
+  import { BrushTool } from "./tools/BrushTool";
+  import { EyedropperTool } from "./tools/EyedropperTool";
 
   const { buffer, charSize, palette } = globalState;
 
@@ -10,122 +13,34 @@
     return r;
   });
 
-  let caret: number | null = $state(null);
   let hoverTarget: number | null = $state(null);
-  let brushFg: number | undefined = $state(0);
-  let brushBg: number | undefined = $state(0);
   let isMouseDown = $state(false);
 
-  const charUnderCaret = $derived(caret === null ? null : buffer.chars[caret]);
-  const [caretX, caretY] = $derived(
-    caret === null
-      ? [null, null]
-      : [caret % buffer.width, Math.floor(caret / buffer.width)],
+  const charUnderCaret = $derived(
+    globalState.caret === null ? null : buffer.chars[globalState.caret],
   );
-
-  function moveSelect(n: number) {
-    caret = (caret! + n) % buffer.chars.length;
-    if (caret < 0) {
-      caret = buffer.chars.length + caret;
-    }
-  }
-
-  function shiftColor(which: "fg" | "bg", by: number) {
-    if (!charUnderCaret) {
-      return;
-    }
-    const curCol = charUnderCaret[which];
-    if (typeof curCol === "number") {
-      charUnderCaret[which] = (curCol + by) % palette.length;
-    }
-    if (curCol === undefined) {
-      charUnderCaret[which] = 0;
-    }
-  }
+  const [caretX, caretY] = $derived(
+    globalState.caret === null
+      ? [null, null]
+      : [
+          globalState.caret % buffer.width,
+          Math.floor(globalState.caret / buffer.width),
+        ],
+  );
 
   function cellMouseOver(idx: number) {
     hoverTarget = idx;
-    if (globalState.tool === "brush" && isMouseDown) {
-      applyBrush(idx);
+    if (isMouseDown) {
+      globalState.tool.onDrag(idx, globalState);
     }
-  }
-
-  function applyBrush(idx: number) {
-    if (idx < 0 || idx >= buffer.chars.length) return;
-    buffer.chars[idx].fg = brushFg;
-    buffer.chars[idx].bg = brushBg;
   }
 
   function cellMouseClick(idx: number) {
-    switch (globalState.tool) {
-      case "cursor":
-        caret = idx;
-        break;
-      case "brush":
-        applyBrush(idx);
-        break;
-    }
+    globalState.tool.onClick(idx, globalState);
   }
 
   function handleKey(e: KeyboardEvent) {
-    if (e.key === "Escape") {
-      caret = null;
-      return;
-    }
-
-    if (caret && e.getModifierState("Shift")) {
-      if (e.key === "ArrowUp") {
-        shiftColor("fg", 1);
-        e.preventDefault();
-        return;
-      }
-      if (e.key === "ArrowDown") {
-        shiftColor("fg", -1);
-        e.preventDefault();
-        return;
-      }
-      if (e.key === "ArrowRight") {
-        shiftColor("bg", 1);
-        e.preventDefault();
-        return;
-      }
-      if (e.key === "ArrowLeft") {
-        shiftColor("bg", -1);
-        e.preventDefault();
-        return;
-      }
-    }
-
-    if (e.key === "ArrowRight") {
-      moveSelect(1);
-      return;
-    }
-    if (e.key === "ArrowLeft") {
-      moveSelect(-1);
-      return;
-    }
-    if (e.key === "ArrowDown") {
-      moveSelect(buffer.width);
-      return;
-    }
-    if (e.key === "ArrowUp") {
-      moveSelect(-buffer.width);
-      return;
-    }
-
-    // Crude way to show that character is "typeable"
-    if (
-      !e.getModifierState("Control") &&
-      !e.getModifierState("Alt") &&
-      !e.getModifierState("Meta") &&
-      e.key.length === 1 &&
-      charUnderCaret !== null
-    ) {
-      charUnderCaret.codepoint = e.key.codePointAt(0) || null;
-      moveSelect(1);
-      e.preventDefault();
-      return;
-    }
+    globalState.tool.onKeyDown(e, globalState);
   }
 
   $effect(() => {
@@ -161,7 +76,7 @@
               <div
                 class={{
                   cell: true,
-                  "cell--selected": idx === caret,
+                  "cell--selected": idx === globalState.caret,
                   [`cell--fg-${styledChar.fg}`]:
                     typeof styledChar.fg === "number",
                   [`cell--bg-${styledChar.bg}`]:
@@ -186,25 +101,55 @@
   <div class="tools">
     <div class="tool-selector">
       <button
-        onclick={() => (globalState.tool = "cursor")}
+        onclick={() => (globalState.tool = new CursorTool())}
         class={{
           "tool-selector__button": true,
-          "tool-selector__button--active": globalState.tool === "cursor",
+          "tool-selector__button--active": globalState.tool.name === "cursor",
         }}
-        disabled={globalState.tool === "cursor"}
+        disabled={globalState.tool.name === "cursor"}
       >
         Cursor
       </button>
       <button
-        onclick={() => (globalState.tool = "brush")}
+        onclick={() => (globalState.tool = new BrushTool())}
         class={{
           "tool-selector__button": true,
-          "tool-selector__button--active": globalState.tool === "brush",
+          "tool-selector__button--active": globalState.tool.name === "brush",
         }}
-        disabled={globalState.tool === "brush"}
+        disabled={globalState.tool.name === "brush"}
       >
         Brush
       </button>
+      <button
+        onclick={() => (globalState.tool = new EyedropperTool())}
+        class={{
+          "tool-selector__button": true,
+          "tool-selector__button--active":
+            globalState.tool.name === "eyedropper",
+        }}
+        disabled={globalState.tool.name === "eyedropper"}
+      >
+        Eyedropper
+      </button>
+    </div>
+
+    {#if globalState.tool.optionsComponent}
+      <svelte:component
+        this={globalState.tool.optionsComponent}
+        tool={globalState.tool}
+      />
+    {/if}
+
+    <div class="char-preview">
+      Current Char:
+      <span class="char-display">
+        {globalState.char ? String.fromCodePoint(globalState.char) : " "}
+      </span>
+      <span class="codepoint-display">
+        {globalState.char
+          ? `U+${globalState.char.toString(16).toUpperCase().padStart(4, "0")}`
+          : "None"}
+      </span>
     </div>
 
     <div class="palette-preview palette-preview--fg">
@@ -217,19 +162,11 @@
           class={{
             cell: true,
             [`cell--fg-${i}`]: !isUndefined,
-            "cell--selected":
-              globalState.tool === "cursor"
-                ? charUnderCaret &&
-                  charUnderCaret.fg === (isUndefined ? undefined : i)
-                : brushFg === (isUndefined ? undefined : i),
+            "cell--selected": globalState.fg === (isUndefined ? undefined : i),
           }}
           onclick={() => {
             const val = isUndefined ? undefined : i;
-            if (globalState.tool === "cursor" && caret !== null) {
-              buffer.chars[caret].fg = val;
-            } else if (globalState.tool === "brush") {
-              brushFg = val;
-            }
+            globalState.fg = val;
           }}
         >
           {isUndefined ? "/" : "@"}
@@ -247,19 +184,11 @@
           class={{
             cell: true,
             [`cell--bg-${i}`]: !isUndefined,
-            "cell--selected":
-              globalState.tool === "cursor"
-                ? charUnderCaret &&
-                  charUnderCaret.bg === (isUndefined ? undefined : i)
-                : brushBg === (isUndefined ? undefined : i),
+            "cell--selected": globalState.bg === (isUndefined ? undefined : i),
           }}
           onclick={() => {
             const val = isUndefined ? undefined : i;
-            if (globalState.tool === "cursor" && caret !== null) {
-              buffer.chars[caret].bg = val;
-            } else if (globalState.tool === "brush") {
-              brushBg = val;
-            }
+            globalState.bg = val;
           }}
         >
           {isUndefined ? "/" : "\u00A0"}
@@ -268,9 +197,9 @@
     </div>
   </div>
   <div class="status">
-    {#if caret !== null}
+    {#if globalState.caret !== null}
       <span class="state state__select">
-        caret: {caretX},{caretY} ({caret})
+        caret: {caretX},{caretY} ({globalState.caret})
       </span>
     {:else}
       <span class="state state__select state__select--empty">

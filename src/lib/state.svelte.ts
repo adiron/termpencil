@@ -1,22 +1,19 @@
 import {
   makeEmptyScreenBuffer,
-  type ScreenBuffer,
 } from "./screenbuffer";
 import {
   DEFAULT_PALETTE,
-  type Tool,
 } from "./constants";
-
-interface GlobalState {
-  buffer: ScreenBuffer,
-  tool: Tool,
-  palette: string[],
-  charSize: [number,number]
-};
+import type { GlobalState } from "./types";
+import { CursorTool } from "./tools/CursorTool";
 
 export let globalState: GlobalState = $state({
   buffer: makeEmptyScreenBuffer(80, 40),
-  tool: "cursor",
+  tool: new CursorTool(),
   palette: DEFAULT_PALETTE,
   charSize: [10, 18],
+  caret: null,
+  fg: 0,
+  bg: 0,
+  char: null,
 });
