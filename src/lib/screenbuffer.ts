@@ -1,3 +1,4 @@
+// Color is either a number (index in palette) or an RGB tuple
 export type Color = number | [number, number, number];
 
 export interface StyledChar {
@@ -111,7 +112,9 @@ export function renderToTerminal(buffer: ScreenBuffer): string {
 
   for (let i = 0; i < buffer.chars.length; i++) {
     if (i > 0 && i % buffer.width === 0) {
-      output += "\n";
+      output += "\x1b[0m\n";
+      lastFg = undefined;
+      lastBg = undefined;
     }
 
     const char = buffer.chars[i];
@@ -152,3 +155,19 @@ export function makeEmptyScreenBuffer(width: number, height: number): ScreenBuff
   };
 }
 
+
+export function generateShellScript(buffer: ScreenBuffer): string {
+  const ansiContent = renderToTerminal(buffer);
+
+  const escaped = ansiContent
+    .replace(/\\/g, "\\\\")
+    .replace(/'/g, "\\'")
+    .replace(/\n/g, "\\n")
+    .replace(/\r/g, "\\r")
+    .replace(/\x00/g, "\\0")
+    .replace(/\x1b/g, "\\x1b");
+
+  return `#!/bin/zsh
+print -n $'${escaped}'
+`;
+}

@@ -1,22 +1,8 @@
 <script lang="ts">
-  import {
-    getCharAt,
-    getRowCount,
-    setCharAt,
-    type ScreenBuffer,
-  } from "./screenbuffer";
+  import { getCharAt, getRowCount } from "./screenbuffer";
+  import { globalState } from "./state.svelte";
 
-  type Tool = "cursor" | "brush";
-
-  interface Props {
-    buffer: ScreenBuffer;
-    charSize: [number, number];
-    palette: string[];
-  }
-
-  const tool : Tool = $state("cursor");
-
-  const { buffer = $bindable(), charSize, palette }: Props = $props();
+  const { buffer, charSize, palette } = globalState;
 
   const styleString: string = $derived.by(() => {
     let r = "";
@@ -26,6 +12,9 @@
 
   let caret: number | null = $state(null);
   let hoverTarget: number | null = $state(null);
+  let brushFg: number | undefined = $state(0);
+  let brushBg: number | undefined = $state(0);
+  let isMouseDown = $state(false);
 
   const charUnderCaret = $derived(caret === null ? null : buffer.chars[caret]);
   const [caretX, caretY] = $derived(
@@ -56,15 +45,24 @@
 
   function cellMouseOver(idx: number) {
     hoverTarget = idx;
+    if (globalState.tool === "brush" && isMouseDown) {
+      applyBrush(idx);
+    }
+  }
+
+  function applyBrush(idx: number) {
+    if (idx < 0 || idx >= buffer.chars.length) return;
+    buffer.chars[idx].fg = brushFg;
+    buffer.chars[idx].bg = brushBg;
   }
 
   function cellMouseClick(idx: number) {
-    switch (tool) {
+    switch (globalState.tool) {
       case "cursor":
         caret = idx;
         break;
       case "brush":
-        // TODO: Implement
+        applyBrush(idx);
         break;
     }
   }
@@ -132,8 +130,14 @@
 
   $effect(() => {
     window.addEventListener("keydown", handleKey);
+    const setMouseDown = () => (isMouseDown = true);
+    const setMouseUp = () => (isMouseDown = false);
+    window.addEventListener("mousedown", setMouseDown);
+    window.addEventListener("mouseup", setMouseUp);
     return () => {
       window.removeEventListener("keydown", handleKey);
+      window.removeEventListener("mousedown", setMouseDown);
+      window.removeEventListener("mouseup", setMouseUp);
     };
   });
 </script>
@@ -180,42 +184,85 @@
   </div>
 
   <div class="tools">
+    <div class="tool-selector">
+      <button
+        onclick={() => (globalState.tool = "cursor")}
+        class={{
+          "tool-selector__button": true,
+          "tool-selector__button--active": globalState.tool === "cursor",
+        }}
+        disabled={globalState.tool === "cursor"}
+      >
+        Cursor
+      </button>
+      <button
+        onclick={() => (globalState.tool = "brush")}
+        class={{
+          "tool-selector__button": true,
+          "tool-selector__button--active": globalState.tool === "brush",
+        }}
+        disabled={globalState.tool === "brush"}
+      >
+        Brush
+      </button>
+    </div>
+
     <div class="palette-preview palette-preview--fg">
-      {#each { length: palette.length }, i}
+      {#each { length: palette.length + 1 }, i}
+        {@const isUndefined = i === palette.length}
         <button
-          aria-label={`Set foreground to ${i}`}
+          aria-label={isUndefined
+            ? "Set foreground to undefined"
+            : `Set foreground to ${i}`}
           class={{
             cell: true,
-            [`cell--fg-${i}`]: true,
-            "cell--selected": charUnderCaret && charUnderCaret.fg === i,
+            [`cell--fg-${i}`]: !isUndefined,
+            "cell--selected":
+              globalState.tool === "cursor"
+                ? charUnderCaret &&
+                  charUnderCaret.fg === (isUndefined ? undefined : i)
+                : brushFg === (isUndefined ? undefined : i),
           }}
           onclick={() => {
-            if (caret !== null) {
-              buffer.chars[caret].fg = i;
+            const val = isUndefined ? undefined : i;
+            if (globalState.tool === "cursor" && caret !== null) {
+              buffer.chars[caret].fg = val;
+            } else if (globalState.tool === "brush") {
+              brushFg = val;
             }
           }}
         >
-          @
+          {isUndefined ? "/" : "@"}
         </button>
       {/each}
     </div>
 
     <div class="palette-preview palette-preview--bg">
-      {#each { length: palette.length }, i}
+      {#each { length: palette.length + 1 }, i}
+        {@const isUndefined = i === palette.length}
         <button
-          aria-label={`Set background to ${i}`}
+          aria-label={isUndefined
+            ? "Set background to undefined"
+            : `Set background to ${i}`}
           class={{
             cell: true,
-            [`cell--bg-${i}`]: true,
-            "cell--selected": charUnderCaret && charUnderCaret.bg === i,
+            [`cell--bg-${i}`]: !isUndefined,
+            "cell--selected":
+              globalState.tool === "cursor"
+                ? charUnderCaret &&
+                  charUnderCaret.bg === (isUndefined ? undefined : i)
+                : brushBg === (isUndefined ? undefined : i),
           }}
           onclick={() => {
-            if (caret !== null) {
-              buffer.chars[caret].bg = i;
+            const val = isUndefined ? undefined : i;
+            if (globalState.tool === "cursor" && caret !== null) {
+              buffer.chars[caret].bg = val;
+            } else if (globalState.tool === "brush") {
+              brushBg = val;
             }
           }}
         >
-          &nbsp;
+          {isUndefined ? "/" : "\u00A0"}
         </button>
       {/each}
     </div>
@@ -244,9 +291,9 @@
   .wrapper {
     display: grid;
     grid-template-areas:
-      "display tools"
+      "tools display"
       "status status";
-    grid-template-columns: 1fr 300px;
+    grid-template-columns: 300px 1fr;
   }
   .display-wrapper {
     grid-area: display;
@@ -255,6 +302,7 @@
   .display {
     outline: 1px solid aliceblue;
     display: inline-block;
+    user-select: none;
   }
   .tools {
     grid-area: tools;
