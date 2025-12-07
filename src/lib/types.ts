@@ -14,6 +14,13 @@ export interface GlobalState {
     buffer: ScreenBuffer;
     tool: Tool;
     palette: string[];
+
+    // These colors are the TERMINAL'S default.
+    // They are what happens when the user has `undefined`
+    // for the colors. (i.e. after reset)
+    defaultFg: string;
+    defaultBg: string;
+
     charSize: [number, number];
     caret: number | null;
     fg: Color | undefined;
