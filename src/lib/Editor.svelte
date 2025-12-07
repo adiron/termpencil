@@ -2,7 +2,7 @@
   import { getCharAt, getRowCount } from "./screenbuffer";
   import { globalState } from "./state.svelte";
   import { CursorTool } from "./tools/CursorTool";
-  import { BrushTool } from "./tools/BrushTool";
+  import { BrushTool } from "./tools/BrushTool.svelte";
   import { EyedropperTool } from "./tools/EyedropperTool";
 
   const { buffer, charSize, palette } = globalState;
@@ -16,9 +16,6 @@
   let hoverTarget: number | null = $state(null);
   let isMouseDown = $state(false);
 
-  const charUnderCaret = $derived(
-    globalState.caret === null ? null : buffer.chars[globalState.caret],
-  );
   const [caretX, caretY] = $derived(
     globalState.caret === null
       ? [null, null]
@@ -134,10 +131,7 @@
     </div>
 
     {#if globalState.tool.optionsComponent}
-      <svelte:component
-        this={globalState.tool.optionsComponent}
-        tool={globalState.tool}
-      />
+      <globalState.tool.optionsComponent tool={globalState.tool} />
     {/if}
 
     <div class="char-preview">

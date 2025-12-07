@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { BrushTool } from "./BrushTool";
+    import type { BrushTool } from "./BrushTool.svelte";
 
     let { tool }: { tool: BrushTool } = $props();
 </script>

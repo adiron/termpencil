@@ -1,11 +1,14 @@
+// This is in a Svelte file because the paintChar property needs to 
+// be reactive in order to be bound in the UI. This has no real 
+// downside afaik so...
+
 import type { Tool, GlobalState } from '../types';
-import type { Color } from '../screenbuffer';
 import BrushOptions from './BrushOptions.svelte';
 
 export class BrushTool implements Tool {
     name = "brush";
-    paintChar = false;
-    optionsComponent = BrushOptions as any;
+    paintChar = $state(false);
+    optionsComponent = BrushOptions;
 
     onClick(index: number, state: GlobalState): void {
         this.paint(index, state);

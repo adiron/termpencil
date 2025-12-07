@@ -1,5 +1,4 @@
 import type { Tool, GlobalState } from '../types';
-import type { Color } from '../screenbuffer';
 
 export class CursorTool implements Tool {
     name = "cursor";
