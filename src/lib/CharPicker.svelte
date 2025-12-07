@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Cell from "./Cell.svelte";
   import { globalState } from "./state.svelte";
 
   // Generate character ranges
@@ -20,16 +21,14 @@
   <h3>Chars</h3>
   <div class="char-grid">
     {#each chars as char}
-      <button
-        class={{
-          "char-cell": true,
-          active: globalState.char === char,
-        }}
+      <Cell
+        fg={undefined}
+        bg={undefined}
         onclick={() => (globalState.char = char)}
-        title={`U+${char.toString(16).toUpperCase().padStart(4, "0")}`}
-      >
-        {String.fromCodePoint(char)}
-      </button>
+        title={char.toString(16).toUpperCase().padStart(4, "0")}
+        {char}
+        selected={char === globalState.char}
+      />
     {/each}
   </div>
 </div>

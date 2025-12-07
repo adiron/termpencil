@@ -9,6 +9,7 @@
     char: number | string | null;
     onmouseover?: (e: MouseEvent) => void;
     onmousedown?: (e: MouseEvent) => void;
+    title?: string;
     onclick?: (e: MouseEvent) => void;
     selected?: boolean;
   }
@@ -22,6 +23,7 @@
     onmouseover,
     onclick,
     selected,
+    title,
   }: Props = $props();
 
   const renderedChar = $derived.by(() => {
@@ -43,6 +45,7 @@
   {onmouseover}
   {onmousedown}
   {onclick}
+  {title}
   class={{
     cell: true,
     [`cell--fg-${fg}`]: typeof fg === "number",
