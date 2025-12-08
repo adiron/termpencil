@@ -12,6 +12,7 @@
     title?: string;
     onclick?: (e: MouseEvent) => void;
     selected?: boolean;
+    size?: "lg" | undefined;
   }
   const {
     tag = "div",
@@ -24,6 +25,7 @@
     onclick,
     selected,
     title,
+    size,
   }: Props = $props();
 
   const renderedChar = $derived.by(() => {
@@ -51,6 +53,7 @@
     [`cell--fg-${fg}`]: typeof fg === "number",
     [`cell--bg-${bg}`]: typeof bg === "number",
     [`cell--selected`]: selected,
+    [`cell--${size}`]: size !== undefined,
   }}
 >
   {renderedChar}
@@ -58,11 +61,11 @@
 
 <style lang="scss">
   .cell {
+    display: table-cell;
     vertical-align: middle;
     outline-width: 1px;
     outline-style: solid;
     outline-color: transparent;
-    display: table-cell;
     height: calc(var(--height) * 1px);
     width: calc(var(--width) * 1px);
     line-height: 100%;
@@ -85,6 +88,13 @@
       &--bg-#{$i} {
         background-color: var(--color-#{$i});
       }
+    }
+
+    &--lg {
+      font-size: 1.5rem;
+      height: calc(var(--height) * 2px);
+      width: calc(var(--width) * 2px);
+      line-height: 1.5rem;
     }
   }
 

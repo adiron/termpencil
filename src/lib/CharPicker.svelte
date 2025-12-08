@@ -28,6 +28,7 @@
         title={char.toString(16).toUpperCase().padStart(4, "0")}
         {char}
         selected={char === globalState.char}
+        size="lg"
       />
     {/each}
   </div>
