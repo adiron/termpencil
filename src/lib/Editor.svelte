@@ -60,7 +60,7 @@
                   <Cell
                     fg={styledChar.fg}
                     bg={styledChar.bg}
-                    selected={idx === globalState.caret}
+                    selected={globalState.tool.showSelection && idx === globalState.caret}
                     onmouseover={() => cellMouseOver(idx)}
                     onmousedown={() => cellMouseClick(idx)}
                     char={styledChar.codepoint}

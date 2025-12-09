@@ -33,13 +33,10 @@
     border-radius: 4px;
     cursor: pointer;
     background: transparent;
-    color: #ccc;
     font-family: inherit;
     text-transform: uppercase;
-    font-size: 0.9rem;
   }
   .menu__button:hover {
-    background: #444;
-    color: white;
+    background: var(--color-4);
   }
 </style>

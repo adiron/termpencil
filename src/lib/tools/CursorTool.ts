@@ -2,6 +2,7 @@ import type { Tool, GlobalState } from '../types';
 
 export class CursorTool implements Tool {
     name = "cursor";
+    showSelection = true;
 
     onClick(index: number, state: GlobalState): void {
         state.caret = index;

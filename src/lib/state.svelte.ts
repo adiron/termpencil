@@ -17,7 +17,7 @@ export let globalState: GlobalState = $state({
   defaultFg: DEFAULT_FG,
   charSize: [10, 18],
   caret: null,
-  fg: 0,
-  bg: 0,
+  fg: undefined,
+  bg: undefined,
   char: null,
 });

@@ -11,7 +11,7 @@
 <div class="toolbox">
   <div class="section status-section">
     <div class="char-info">
-      <div class="char-preview">
+      <div class="char-preview" style:backgroundColor={globalState.bg}>
         {globalState.char ? String.fromCodePoint(globalState.char) : " "}
       </div>
       <div class="codepoint">
@@ -180,8 +180,8 @@
   }
 
   .palette-mini {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
     gap: 1px;
   }
 

@@ -5,15 +5,36 @@
 </script>
 
 <div class="tool-options">
-    <label>
-        <input type="checkbox" bind:checked={tool.paintChar} />
-        Paint Character
-    </label>
+    Paint Mode
+    <button
+      onclick={() => tool.paintMode = "both"}
+      disabled={tool.paintMode === "both"}
+    >
+      Both
+    </button>
+    <button
+      onclick={() => tool.paintMode = "color"}
+      disabled={tool.paintMode === "color"}
+    >
+      Color
+    </button>
+    <button
+      onclick={() => tool.paintMode = "char"}
+      disabled={tool.paintMode === "char"}
+    >
+      Char
+    </button>
+      
 </div>
 
-<style>
+<style lang="scss">
     .tool-options {
         padding: 0.5rem;
         border-bottom: 1px solid #ccc;
+    }
+    button {
+      &:disabled {
+        color: var(--color-11)
+      }
     }
 </style>

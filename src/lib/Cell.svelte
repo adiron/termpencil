@@ -50,8 +50,8 @@
   {title}
   class={{
     cell: true,
-    [`cell--fg-${fg}`]: typeof fg === "number",
-    [`cell--bg-${bg}`]: typeof bg === "number",
+    [`cell--fg-${fg}`]: fg,
+    [`cell--bg-${bg}`]: bg,
     [`cell--selected`]: selected,
     [`cell--${size}`]: size !== undefined,
   }}
@@ -71,12 +71,19 @@
     line-height: 100%;
     font-size: 1rem;
 
+    &--lg {
+      font-size: 1.5rem;
+      height: calc(var(--height) * 2px);
+      width: calc(var(--width) * 2px);
+      line-height: 1.5rem;
+    }
+
     &:hover {
-      outline-color: slateblue;
+      outline-color: var(--color-6);
     }
 
     &--selected {
-      animation: glow 1500ms infinite;
+      animation: glow 1000ms infinite;
     }
 
     @for $i from 0 through 15 {
@@ -89,24 +96,17 @@
         background-color: var(--color-#{$i});
       }
     }
-
-    &--lg {
-      font-size: 1.5rem;
-      height: calc(var(--height) * 2px);
-      width: calc(var(--width) * 2px);
-      line-height: 1.5rem;
-    }
   }
 
   @keyframes glow {
     0% {
-      outline-color: slategray;
+      outline-color: var(--color-14);
     }
     50% {
-      outline-color: aliceblue;
+      outline-color: var(--color-15);
     }
     100% {
-      outline-color: slategray;
+      outline-color: var(--color-14);
     }
   }
 </style>

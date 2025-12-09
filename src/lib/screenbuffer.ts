@@ -1,5 +1,5 @@
 // Color is either a number (index in palette) or an RGB tuple
-export type Color = number | [number, number, number];
+export type Color = number;
 
 export interface StyledChar {
   codepoint: number | null;
@@ -84,24 +84,14 @@ export function setCharsAt(buffer: ScreenBuffer, x: number, y: number, chars: St
 
 function colorToAnsi(color: Color, isBg: boolean): string {
   const prefix = isBg ? 48 : 38;
-  if (typeof color === 'number') {
-    return `\x1b[${prefix};5;${color}m`;
-  } else {
-    const [r, g, b] = color;
-    return `\x1b[${prefix};2;${r};${g};${b}m`;
-  }
+  return `\x1b[${prefix};5;${color}m`;
 }
 
 function colorsEqual(a: Color | undefined, b: Color | undefined): boolean {
-  if (a === b) return true;
-  if (a === undefined || b === undefined) return false;
-
   if (typeof a === 'number' && typeof b === 'number') {
     return a === b;
   }
-  if (Array.isArray(a) && Array.isArray(b)) {
-    return a[0] === b[0] && a[1] === b[1] && a[2] === b[2];
-  }
+  if (a === b) return true;
   return false;
 }
 

@@ -8,6 +8,7 @@ export interface Tool {
     onClick(index: number, state: GlobalState): void;
     onDrag(index: number, state: GlobalState): void;
     onKeyDown(event: KeyboardEvent, state: GlobalState): void;
+    showSelection?: boolean;
 }
 
 export interface GlobalState {
