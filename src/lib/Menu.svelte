@@ -1,9 +1,11 @@
 <script lang="ts">
+    import { TERM_PENCIL } from "./constants";
   import { generateShellScript } from "./screenbuffer";
   import { globalState } from "./state.svelte";
 </script>
 
 <div class="menu">
+  <div title="termpencil">{TERM_PENCIL}</div>
   <button class="menu__button">Import</button>
   <button class="menu__button">Export</button>
   <button class="menu__button">Edit</button>

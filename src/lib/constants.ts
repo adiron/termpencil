@@ -1,3 +1,4 @@
+export const TERM_PENCIL = "<:::D"
 export const DEFAULT_FG = "#dddddd";
 export const DEFAULT_BG = "#0A0A0A";
 export const DEFAULT_PALETTE = [
