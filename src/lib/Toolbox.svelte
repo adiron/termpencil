@@ -10,8 +10,12 @@
 
 <div class="toolbox">
   <div class="section status-section">
-    <div class="char-info">
-      <div class="char-preview" style:backgroundColor={globalState.bg}>
+    <div
+      class="char-info"
+      style:background-color={`var(--color-${globalState.bg})`}
+      style:color={`var(--color-${globalState.fg})`}
+    >
+      <div class="char-preview">
         {globalState.char ? String.fromCodePoint(globalState.char) : " "}
       </div>
       <div class="codepoint">
@@ -121,7 +125,6 @@
     flex-direction: column;
     gap: 1rem;
     padding: 1rem;
-    background: #333;
     height: 100%;
     box-sizing: border-box;
     border-right: 1px solid var(--color-8);
@@ -132,7 +135,6 @@
   .section {
     border: 1px solid #555;
     padding: 0.5rem;
-    background: #2a2a2a;
   }
 
   .status-section {
@@ -145,7 +147,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border: 1px solid #444;
+    border: 1px solid var(--color-8);
     padding: 0.5rem;
     min-width: 60px;
   }
@@ -157,7 +159,6 @@
 
   .codepoint {
     font-size: 0.8rem;
-    color: #aaa;
   }
 
   .colors-info {
@@ -176,22 +177,12 @@
   .label {
     width: 20px;
     font-size: 0.8rem;
-    color: #aaa;
   }
 
   .palette-mini {
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     gap: 1px;
-  }
-
-  h3 {
-    margin: 0 0 0.5rem 0;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    color: #888;
-    border-bottom: 1px solid #444;
-    padding-bottom: 0.2rem;
   }
 
   .tool-list {
@@ -203,18 +194,18 @@
   .tool-button {
     text-align: left;
     padding: 0.5rem;
-    background: #333;
-    border: 1px solid transparent;
+    background: var(--default-bg);
+    border: 1px solid var(--color-8);
     cursor: pointer;
 
     &:hover {
-      background: #444;
+      background: var(--color-4);
     }
 
     &.active {
-      background: #444;
-      border-color: #666;
-      color: white;
+      background: var(--color-12);
+      border-color: var(--default-fg);
+      color: var(--default-fg);
     }
   }
 

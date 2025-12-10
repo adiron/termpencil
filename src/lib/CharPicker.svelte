@@ -39,22 +39,15 @@
     grid-area: charpicker;
     display: flex;
     flex-direction: column;
-    background: #333;
     height: 100%;
     box-sizing: border-box;
     border-left: 1px solid var(--color-8);
     overflow-y: auto;
     flex-shrink: 0;
+    padding: 0.5rem;
   }
 
   h3 {
-    margin: 0;
-    padding: 0.5rem;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    color: #888;
-    border-bottom: 1px solid #444;
-    background: #2a2a2a;
     position: sticky;
     top: 0;
   }

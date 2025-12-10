@@ -28,10 +28,6 @@
 </div>
 
 <style lang="scss">
-    .tool-options {
-        padding: 0.5rem;
-        border-bottom: 1px solid #ccc;
-    }
     button {
       &:disabled {
         color: var(--color-11)

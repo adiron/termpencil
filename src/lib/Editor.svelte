@@ -29,6 +29,58 @@
   }
 
   function handleKey(e: KeyboardEvent) {
+    if (e.getModifierState("Shift")) {
+      if (e.key === "ArrowRight") {
+        if (globalState.fg === undefined) {
+          globalState.fg = 0;
+          e.preventDefault();
+          return;
+        }
+        globalState.fg = (globalState.fg + 1) % 16;
+        e.preventDefault();
+        return;
+      }
+
+      if (e.key === "ArrowUp") {
+        if (globalState.bg === undefined) {
+          globalState.bg = 0;
+          e.preventDefault();
+          return;
+        }
+        globalState.bg = (globalState.bg + 1) % 16;
+        e.preventDefault();
+        return;
+      }
+
+      if (e.key === "ArrowLeft") {
+        if (globalState.fg === undefined) {
+          globalState.fg = 15;
+          e.preventDefault();
+          return;
+        }
+        globalState.fg = (globalState.fg - 1) % 16;
+        if (globalState.fg < 0) {
+          globalState.fg = 15;
+        }
+        e.preventDefault();
+        return;
+      }
+
+      if (e.key === "ArrowDown") {
+        if (globalState.bg === undefined) {
+          globalState.bg = 15;
+          e.preventDefault();
+          return;
+        }
+        globalState.bg = (globalState.bg - 1) % 16;
+        if (globalState.bg < 0) {
+          globalState.bg = 15;
+        }
+        e.preventDefault();
+        return;
+      }
+
+    }
     globalState.tool.onKeyDown(e, globalState);
   }
 
@@ -60,7 +112,8 @@
                   <Cell
                     fg={styledChar.fg}
                     bg={styledChar.bg}
-                    selected={globalState.tool.showSelection && idx === globalState.caret}
+                    selected={globalState.tool.showSelection &&
+                      idx === globalState.caret}
                     onmouseover={() => cellMouseOver(idx)}
                     onmousedown={() => cellMouseClick(idx)}
                     char={styledChar.codepoint}

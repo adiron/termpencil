@@ -1,11 +1,11 @@
 <script lang="ts">
-    import { TERM_PENCIL } from "./constants";
+  import { TERM_PENCIL } from "./constants";
   import { generateShellScript } from "./screenbuffer";
   import { globalState } from "./state.svelte";
 </script>
 
 <div class="menu">
-  <div title="termpencil">{TERM_PENCIL}</div>
+  <div class="logo" title="termpencil">{TERM_PENCIL}</div>
   <button class="menu__button">Import</button>
   <button class="menu__button">Export</button>
   <button class="menu__button">Edit</button>
@@ -19,7 +19,7 @@
   >
 </div>
 
-<style>
+<style lang="scss">
   .menu {
     grid-area: menu;
     display: flex;
@@ -40,5 +40,23 @@
   }
   .menu__button:hover {
     background: var(--color-4);
+  }
+
+  .logo {
+    padding: 0 0.5rem;
+    color: var(--color-15);
+
+    &:hover {
+      animation: color-cycle 4s infinite;
+      cursor: pointer;
+    }
+
+    @keyframes color-cycle {
+      @for $i from 0 through 15 {
+        #{($i * 100% / 16)} {
+          color: var(--color-#{$i});
+        }
+      }
+    }
   }
 </style>
