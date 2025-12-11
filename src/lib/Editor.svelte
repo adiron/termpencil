@@ -2,6 +2,7 @@
   import Cell from "./Cell.svelte";
   import { getCharAt, getRowCount } from "./screenbuffer";
   import { globalState } from "./state.svelte";
+    import { shiftColor } from "./utils.svelte";
 
   const { buffer } = globalState;
 
@@ -31,51 +32,25 @@
   function handleKey(e: KeyboardEvent) {
     if (e.getModifierState("Shift")) {
       if (e.key === "ArrowRight") {
-        if (globalState.fg === undefined) {
-          globalState.fg = 0;
-          e.preventDefault();
-          return;
-        }
-        globalState.fg = (globalState.fg + 1) % 16;
+        shiftColor("fg", 1);
         e.preventDefault();
         return;
       }
 
       if (e.key === "ArrowUp") {
-        if (globalState.bg === undefined) {
-          globalState.bg = 0;
-          e.preventDefault();
-          return;
-        }
-        globalState.bg = (globalState.bg + 1) % 16;
+        shiftColor("bg", 1);
         e.preventDefault();
         return;
       }
 
       if (e.key === "ArrowLeft") {
-        if (globalState.fg === undefined) {
-          globalState.fg = 15;
-          e.preventDefault();
-          return;
-        }
-        globalState.fg = (globalState.fg - 1) % 16;
-        if (globalState.fg < 0) {
-          globalState.fg = 15;
-        }
+        shiftColor("fg", -1);
         e.preventDefault();
         return;
       }
 
       if (e.key === "ArrowDown") {
-        if (globalState.bg === undefined) {
-          globalState.bg = 15;
-          e.preventDefault();
-          return;
-        }
-        globalState.bg = (globalState.bg - 1) % 16;
-        if (globalState.bg < 0) {
-          globalState.bg = 15;
-        }
+        shiftColor("bg", -1);
         e.preventDefault();
         return;
       }
@@ -179,16 +154,15 @@
   }
 
   .display {
-    outline: 1px solid aliceblue;
+    outline: 1px solid var(--color-14);
     display: inline-block;
     user-select: none;
-    background: black; /* Ensure background is black */
   }
 
   .status {
     width: 100%;
     text-align: center;
-    color: #888;
+    color: var(--color-8);
     font-size: 0.8rem;
   }
 

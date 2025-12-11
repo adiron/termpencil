@@ -53,7 +53,7 @@
 
     @keyframes color-cycle {
       @for $i from 0 through 15 {
-        #{($i * 100% / 16)} {
+        #{($i * calc(100% / 16))} {
           color: var(--color-#{$i});
         }
       }

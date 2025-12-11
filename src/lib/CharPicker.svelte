@@ -55,7 +55,7 @@
   .char-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(24px, 1fr));
-    gap: 1px;
+    gap: 4px;
     padding: 0.5rem;
   }
 </style>

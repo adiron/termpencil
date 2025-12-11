@@ -50,8 +50,8 @@
   {title}
   class={{
     cell: true,
-    [`cell--fg-${fg}`]: fg,
-    [`cell--bg-${bg}`]: bg,
+    [`cell--fg-${fg}`]: fg !== undefined,
+    [`cell--bg-${bg}`]: bg !== undefined,
     [`cell--selected`]: selected,
     [`cell--${size}`]: size !== undefined,
   }}
@@ -73,8 +73,8 @@
 
     &--lg {
       font-size: 1.5rem;
-      height: calc(var(--height) * 2px);
-      width: calc(var(--width) * 2px);
+      height: calc(var(--height) * 1.5px);
+      width: calc(var(--width) * 1.5px);
       line-height: 1.5rem;
     }
 
