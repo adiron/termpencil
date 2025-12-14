@@ -27,4 +27,12 @@ export interface GlobalState {
     fg: Color | undefined;
     bg: Color | undefined;
     char: number | null;
+
+    image: {
+      data: ArrayBuffer|null;
+      x: number;
+      y: number;
+      scale: number;
+      opacity: number;
+    }
 }

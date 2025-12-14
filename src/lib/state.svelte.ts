@@ -20,4 +20,11 @@ export let globalState: GlobalState = $state({
   fg: undefined,
   bg: undefined,
   char: null,
+  image: {
+    data: null,
+    x: 0,
+    y: 0,
+    scale: 1,
+    opacity: 0.3,
+  },
 });

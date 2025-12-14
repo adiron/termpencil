@@ -1,5 +1,6 @@
 <script lang="ts">
   import Cell from "./Cell.svelte";
+    import OverlayImage from "./OverlayImage.svelte";
   import { getCharAt, getRowCount } from "./screenbuffer";
   import { globalState } from "./state.svelte";
     import { shiftColor } from "./utils.svelte";
@@ -78,6 +79,9 @@
     <div class="editor-container">
       <div class="display-wrapper">
         <div class="display">
+          {#if globalState.image.data }
+            <OverlayImage />
+          {/if}
           {#each { length: getRowCount(buffer) }, rowI}
             <div class="row">
               {#each { length: buffer.width }, colI}
@@ -156,7 +160,9 @@
   .display {
     outline: 1px solid var(--color-14);
     display: inline-block;
+    position: relative;
     user-select: none;
+    overflow: hidden;
   }
 
   .status {
