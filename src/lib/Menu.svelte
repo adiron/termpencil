@@ -1,8 +1,13 @@
 <script lang="ts">
   import { TERM_PENCIL } from "./constants";
-  import { generateShellScript } from "./screenbuffer";
-  import { globalState } from "./state.svelte";
+  import CodeModal from "./CodeModal.svelte";
+
+  type ModalName = undefined | "code";
+
+  let modal: ModalName = $state(undefined);
 </script>
+
+<CodeModal open={modal === "code"} onclose={() => (modal = undefined)} />
 
 <div class="menu">
   <div class="logo" title="termpencil">{TERM_PENCIL}</div>
@@ -12,10 +17,8 @@
   <button class="menu__button" onclick={() => console.log("Clear")}
     >Clear</button
   >
-  <button
-    class="menu__button"
-    onclick={() => console.log(generateShellScript(globalState.buffer))}
-    >Shell Preview</button
+  <button class="menu__button" onclick={() => (modal = "code")}
+    >Terminal Preview</button
   >
 </div>
 
