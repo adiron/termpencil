@@ -5,6 +5,8 @@
   import { EyedropperTool } from "./tools/EyedropperTool";
   import Cell from "./Cell.svelte";
   import type { Tool } from "./types";
+  import Button from "./Button.svelte";
+    import { OverlayTool } from "./tools/OverlayTool.svelte";
 
   const { palette } = globalState;
 
@@ -12,20 +14,17 @@
     ["Cursor", new CursorTool()],
     ["Brush", new BrushTool()],
     ["Eyedropper", new EyedropperTool()],
+    ["Overlay", new OverlayTool()],
   ];
 </script>
 
 {#snippet toolList()}
   {#each TOOLS as [name, tool]}
-    <button
+    <Button
       onclick={() => (globalState.tool = tool)}
-      class={{
-        "tool-button": true,
-        active: globalState.tool === tool,
-      }}
-    >
-      {name}
-    </button>
+      active={globalState.tool === tool}
+      text={name}
+    />
   {/each}
 {/snippet}
 
@@ -101,6 +100,7 @@
     </div>
   </div>
 
+  {#key globalState.tool}
   {#if globalState.tool.optionsComponent}
     <div class="section options-section">
       <h3>Tool Options</h3>
@@ -109,6 +109,7 @@
       </div>
     </div>
   {/if}
+  {/key}
 </div>
 
 <style lang="scss">
@@ -182,24 +183,6 @@
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-  }
-
-  .tool-button {
-    text-align: left;
-    padding: 0.5rem;
-    background: var(--default-bg);
-    border: 1px solid var(--color-8);
-    cursor: pointer;
-
-    &:hover {
-      background: var(--color-4);
-    }
-
-    &.active {
-      background: var(--color-12);
-      border-color: var(--default-fg);
-      color: var(--default-fg);
-    }
   }
 
   .options-content {

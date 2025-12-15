@@ -1,26 +1,20 @@
 <script lang="ts">
   import { TERM_PENCIL } from "./constants";
   import CodeModal from "./CodeModal.svelte";
-    import OverlayModal from "./OverlayModal.svelte";
     import { globalState } from "./state.svelte";
 
-  type ModalName = undefined | "code" | "overlay";
+  type ModalName = undefined | "code";
 
   let modal: ModalName = $state(undefined);
 </script>
 
 <CodeModal open={modal === "code"} onclose={() => (modal = undefined)} />
-<OverlayModal open={modal === "overlay"} onclose={() => modal = undefined} />
 
 <div class="menu">
   <div class="logo" title="termpencil">{TERM_PENCIL}</div>
   <button class="menu__button">Import</button>
   <button class="menu__button">Export</button>
   <button class="menu__button">Edit</button>
-  <button class="menu__button" onclick={() => modal = "overlay"}>Set Overlay</button>
-  <button class="menu__button" onclick={() => globalState.image.data = null}
-    >Clear Overlay</button
-  >
   <button class="menu__button" onclick={() => (modal = "code")}
     >Terminal Preview</button
   >

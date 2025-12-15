@@ -19,15 +19,15 @@
         ],
   );
 
-  function cellMouseOver(idx: number) {
+  function cellMouseOver(event: MouseEvent, idx: number) {
     hoverTarget = idx;
     if (isMouseDown) {
-      globalState.tool.onDrag(idx, globalState);
+      globalState.tool.onDrag(idx, globalState, event.clientX, event.clientY);
     }
   }
 
-  function cellMouseClick(idx: number) {
-    globalState.tool.onClick(idx, globalState);
+  function cellMouseClick(event: MouseEvent, idx: number) {
+    globalState.tool.onClick(idx, globalState, event.clientX, event.clientY);
   }
 
   function handleKey(e: KeyboardEvent) {
@@ -93,8 +93,8 @@
                     bg={styledChar.bg}
                     selected={globalState.tool.showSelection &&
                       idx === globalState.caret}
-                    onmouseover={() => cellMouseOver(idx)}
-                    onmousedown={() => cellMouseClick(idx)}
+                    onmouseover={(e) => cellMouseOver(e, idx)}
+                    onmousedown={(e) => cellMouseClick(e, idx)}
                     char={styledChar.codepoint}
                   />
                 {/if}

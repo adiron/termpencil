@@ -8,7 +8,7 @@ export class CursorTool implements Tool {
         state.caret = index;
     }
 
-    onDrag(index: number, state: GlobalState): void {
+    onDrag(_index: number, _state: GlobalState): void {
         // Cursor tool doesn't do anything on drag for now
     }
 
