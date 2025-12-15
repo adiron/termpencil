@@ -4,9 +4,30 @@
   import { BrushTool } from "./tools/BrushTool.svelte";
   import { EyedropperTool } from "./tools/EyedropperTool";
   import Cell from "./Cell.svelte";
+  import type { Tool } from "./types";
 
   const { palette } = globalState;
+
+  const TOOLS: [string, Tool][] = [
+    ["Cursor", new CursorTool()],
+    ["Brush", new BrushTool()],
+    ["Eyedropper", new EyedropperTool()],
+  ];
 </script>
+
+{#snippet toolList()}
+  {#each TOOLS as [name, tool]}
+    <button
+      onclick={() => (globalState.tool = tool)}
+      class={{
+        "tool-button": true,
+        active: globalState.tool === tool,
+      }}
+    >
+      {name}
+    </button>
+  {/each}
+{/snippet}
 
 <div class="toolbox">
   <div class="section status-section">
@@ -76,46 +97,18 @@
   <div class="section tool-section">
     <h3>Tools</h3>
     <div class="tool-list">
-      <button
-        onclick={() => (globalState.tool = new CursorTool())}
-        class={{
-          "tool-button": true,
-          active: globalState.tool.name === "cursor",
-        }}
-      >
-        Cursor
-      </button>
-      <button
-        onclick={() => (globalState.tool = new BrushTool())}
-        class={{
-          "tool-button": true,
-          active: globalState.tool.name === "brush",
-        }}
-      >
-        Brush
-      </button>
-      <button
-        onclick={() => (globalState.tool = new EyedropperTool())}
-        class={{
-          "tool-button": true,
-          active: globalState.tool.name === "eyedropper",
-        }}
-      >
-        Eyedropper
-      </button>
+      {@render toolList()}
     </div>
   </div>
 
-  <div class="section options-section">
-    <h3>Tool Options</h3>
-    <div class="options-content">
-      {#if globalState.tool.optionsComponent}
+  {#if globalState.tool.optionsComponent}
+    <div class="section options-section">
+      <h3>Tool Options</h3>
+      <div class="options-content">
         <globalState.tool.optionsComponent tool={globalState.tool} />
-      {:else}
-        <div class="no-options">No options available</div>
-      {/if}
+      </div>
     </div>
-  </div>
+  {/if}
 </div>
 
 <style lang="scss">
