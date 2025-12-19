@@ -150,7 +150,7 @@ export function generateShellScript(buffer: ScreenBuffer): string {
   const ansiContent = renderToTerminal(buffer);
 
   const escaped = ansiContent
-    .replace(/\\/g, "\\\\")
+    .replace(/\\/g, "\\\\\\\\")
     .replace(/'/g, "\\'")
     .replace(/\n/g, "\\n")
     .replace(/\r/g, "\\r")
