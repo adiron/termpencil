@@ -1,20 +1,24 @@
 <script lang="ts">
   import { TERM_PENCIL } from "./constants";
   import CodeModal from "./CodeModal.svelte";
-    import { globalState } from "./state.svelte";
+  import OpenSaveModal from "./OpenSaveModal.svelte";
 
-  type ModalName = undefined | "code";
+  type ModalName = undefined | "code" | "importexport";
 
   let modal: ModalName = $state(undefined);
 </script>
 
 <CodeModal open={modal === "code"} onclose={() => (modal = undefined)} />
+<OpenSaveModal
+  open={modal === "importexport"}
+  onclose={() => (modal = undefined)}
+/>
 
 <div class="menu">
   <div class="logo" title="termpencil">{TERM_PENCIL}</div>
-  <button class="menu__button">Import</button>
-  <button class="menu__button">Export</button>
-  <button class="menu__button">Edit</button>
+  <button class="menu__button" onclick={() => (modal = "importexport")}
+    >Import/Export</button
+  >
   <button class="menu__button" onclick={() => (modal = "code")}
     >Terminal Preview</button
   >

@@ -1,11 +1,9 @@
 <script lang="ts">
   import Cell from "./Cell.svelte";
-    import OverlayImage from "./OverlayImage.svelte";
+  import OverlayImage from "./OverlayImage.svelte";
   import { getCharAt, getRowCount } from "./screenbuffer";
   import { globalState } from "./state.svelte";
-    import { shiftColor } from "./utils.svelte";
-
-  const { buffer } = globalState;
+  import { shiftColor } from "./utils.svelte";
 
   let hoverTarget: number | null = $state(null);
   let isMouseDown = $state(false);
@@ -14,8 +12,8 @@
     globalState.caret === null
       ? [null, null]
       : [
-          globalState.caret % buffer.width,
-          Math.floor(globalState.caret / buffer.width),
+          globalState.caret % globalState.buffer.width,
+          Math.floor(globalState.caret / globalState.buffer.width),
         ],
   );
 
@@ -55,7 +53,6 @@
         e.preventDefault();
         return;
       }
-
     }
     globalState.tool.onKeyDown(e, globalState);
   }
@@ -79,15 +76,19 @@
     <div class="editor-container">
       <div class="display-wrapper">
         <div class="display">
-          {#if globalState.image.data }
+          {#if globalState.image.data}
             <OverlayImage />
           {/if}
-          {#each { length: getRowCount(buffer) }, rowI}
+          {#each { length: getRowCount(globalState.buffer) }, rowI}
             <div class="row">
-              {#each { length: buffer.width }, colI}
-                {@const idx = colI + rowI * buffer.width}
-                {#if idx <= buffer.chars.length}
-                  {@const styledChar = getCharAt(buffer, colI, rowI)}
+              {#each { length: globalState.buffer.width }, colI}
+                {@const idx = colI + rowI * globalState.buffer.width}
+                {#if idx <= globalState.buffer.chars.length}
+                  {@const styledChar = getCharAt(
+                    globalState.buffer,
+                    colI,
+                    rowI,
+                  )}
                   <Cell
                     fg={styledChar.fg}
                     bg={styledChar.bg}
@@ -116,8 +117,8 @@
         {/if}
         {#if hoverTarget !== null}
           <span class="state">
-            (hovering: {hoverTarget % buffer.width},{Math.floor(
-              hoverTarget / buffer.width,
+            (hovering: {hoverTarget % globalState.buffer.width},{Math.floor(
+              hoverTarget / globalState.buffer.width,
             )} ({hoverTarget}))
           </span>
         {/if}
