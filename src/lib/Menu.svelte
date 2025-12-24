@@ -2,22 +2,25 @@
   import { TERM_PENCIL } from "./constants";
   import CodeModal from "./CodeModal.svelte";
   import OpenSaveModal from "./OpenSaveModal.svelte";
+  import ResizeModal from "./ResizeModal.svelte";
 
-  type ModalName = undefined | "code" | "importexport";
+  type ModalName = undefined | "code" | "importexport" | "resize";
 
   let modal: ModalName = $state(undefined);
+  const onclose = () => (modal = undefined);
+
 </script>
 
-<CodeModal open={modal === "code"} onclose={() => (modal = undefined)} />
-<OpenSaveModal
-  open={modal === "importexport"}
-  onclose={() => (modal = undefined)}
-/>
+<CodeModal open={modal === "code"} {onclose} />
+<OpenSaveModal open={modal === "importexport"} {onclose} />
+<ResizeModal open={modal === "resize"} {onclose} />
 
 <div class="menu">
   <div class="logo" title="termpencil">{TERM_PENCIL}</div>
   <button class="menu__button" onclick={() => (modal = "importexport")}
-    >Import/Export</button
+    >File</button
+  >
+  <button class="menu__button" onclick={() => (modal = "resize")}>Resize</button
   >
   <button class="menu__button" onclick={() => (modal = "code")}
     >Terminal Preview</button

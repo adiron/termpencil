@@ -35,4 +35,6 @@ export interface GlobalState {
     scale: number;
     opacity: number;
   }
+
+  editorHasKeyboard: boolean;
 }

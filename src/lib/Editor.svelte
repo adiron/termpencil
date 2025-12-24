@@ -29,6 +29,8 @@
   }
 
   function handleKey(e: KeyboardEvent) {
+    if (!globalState.editorHasKeyboard) return;
+
     if (e.getModifierState("Shift")) {
       if (e.key === "ArrowRight") {
         shiftColor("fg", 1);

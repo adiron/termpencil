@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
+    import { globalState } from "./state.svelte";
 
   interface Props {
     title?: string;
@@ -8,6 +9,13 @@
   }
 
   let { title, children, onclose }: Props = $props();
+
+  $effect(() => {
+    globalState.editorHasKeyboard = false;
+    return () => {
+      globalState.editorHasKeyboard = true;
+    };
+  });
 </script>
 
 <div

@@ -27,4 +27,5 @@ export let globalState: GlobalState = $state({
     scale: 1,
     opacity: 0.3,
   },
+  editorHasKeyboard: true,
 });

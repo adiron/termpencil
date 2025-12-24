@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Button from "./Button.svelte";
   import Modal from "./Modal.svelte";
   import { generateShellScript } from "./screenbuffer";
   import { globalState } from "./state.svelte";
@@ -28,7 +29,7 @@
     <div class="container">
       <div class="text">
         Save and run the following script in the terminal of your choice:
-        <button onclick={downloadScript}>Download .sh file</button>
+        <Button text="Download .sh file" onclick={downloadScript} />
       </div>
       <pre class="pre">{script}</pre>
     </div>
