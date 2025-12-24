@@ -89,14 +89,6 @@ function colorToAnsi(color: Color, isBg: boolean): string {
   return `\x1b[${prefix};5;${color}m`;
 }
 
-function colorsEqual(a: Color | undefined, b: Color | undefined): boolean {
-  if (typeof a === 'number' && typeof b === 'number') {
-    return a === b;
-  }
-  if (a === b) return true;
-  return false;
-}
-
 export function renderToTerminal(buffer: ScreenBuffer): string {
   let output = "";
   let lastFg: Color | undefined = undefined;
@@ -111,7 +103,7 @@ export function renderToTerminal(buffer: ScreenBuffer): string {
 
     const char = buffer.chars[i];
 
-    if (!colorsEqual(lastFg, char.fg)) {
+    if (lastFg !== char.fg) {
       if (char.fg === undefined) {
         output += "\x1b[39m";
       } else {
@@ -120,7 +112,7 @@ export function renderToTerminal(buffer: ScreenBuffer): string {
       lastFg = char.fg;
     }
 
-    if (!colorsEqual(lastBg, char.bg)) {
+    if (lastBg !== char.bg) {
       if (char.bg === undefined) {
         output += "\x1b[49m";
       } else {
@@ -145,6 +137,28 @@ export function makeEmptyScreenBuffer(width: number, height: number): ScreenBuff
     chars: Array.from({ length: width * height }, () => ({ codepoint: null, fg: undefined, bg: undefined })),
     width: width
   };
+}
+
+export function resizeScreenBuffer(buffer: ScreenBuffer, width: number, height: number): ScreenBuffer {
+  // No resizing needed
+  if (width === buffer.width &&
+    height === Math.ceil(buffer.chars.length / width)) {
+    return buffer;
+  }
+
+  const newbuf = makeEmptyScreenBuffer(width, height);
+
+  const minWidth = Math.min(buffer.width, width);
+  const minHeight = Math.min(getRowCount(buffer), height);
+
+  for (let y = 0; y < minHeight; y++) {
+    for (let x = 0; x < minWidth; x++) {
+      const char = getCharAt(buffer, x, y);
+      setCharAt(newbuf, x, y, char);
+    }
+  }
+
+  return newbuf;
 }
 
 
