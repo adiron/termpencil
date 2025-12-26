@@ -28,8 +28,6 @@
     if (!mouseDown) return;
     if (e.target !== e.currentTarget) return;
     const size = (e.target as HTMLDivElement).getBoundingClientRect();
-    console.log(size);
-    console.log(e.clientX);
     value = mapRange(e.clientX, size.left, size.right, min, max);
   };
 </script>
