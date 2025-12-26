@@ -3,8 +3,6 @@ import {
   screenBufferFromBinary,
   screenBufferToBinary,
   makeEmptyScreenBuffer,
-  type ScreenBuffer,
-  type StyledChar,
   setCharsAt,
   resizeScreenBuffer,
   setCharAt
