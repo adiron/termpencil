@@ -11,7 +11,7 @@
 <img
   src={blobUri}
   alt="overlaid graphic"
-  style:transform={`scale(${globalState.image.scale}) translate(${globalState.image.x}px, ${globalState.image.y}px) `}
+  style:transform={`translate(${globalState.image.x}px, ${globalState.image.y}px) scale(${globalState.image.scale})`}
   style:opacity={globalState.image.opacity}
 />
 

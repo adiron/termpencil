@@ -1,4 +1,3 @@
-import { globalState } from '../state.svelte';
 import type { Tool, GlobalState } from '../types';
 import OverlayOptions from "./OverlayOptions.svelte";
 
@@ -6,34 +5,40 @@ export class OverlayTool implements Tool {
   name = "overlay";
   showSelection = false;
 
+  lastMousePos: [number,number] = [0,0];
+
   optionsComponent = OverlayOptions;
 
-  onClick(index: number, state: GlobalState, x: number, y: number): void {
-    // Implement dragging to reposition
+  onClick(_index: number, _state: GlobalState, x: number, y: number): void {
+    this.lastMousePos = [x,y];
   }
 
-  onDrag(index: number, state: GlobalState, x: number, y: number): void {
+  onDrag(_index: number, state: GlobalState, x: number, y: number): void {
     // Implement dragging to reposition
+    const delta = [this.lastMousePos[0] - x, this.lastMousePos[1] - y];
+    state.image.x -= delta[0];
+    state.image.y -= delta[1];
+    this.lastMousePos = [x,y];
   }
 
   onKeyDown(event: KeyboardEvent, state: GlobalState): void {
     if (event.key === "ArrowRight") {
-      globalState.image.x++;
+      state.image.x++;
       event.preventDefault();
       return;
     }
     if (event.key === "ArrowLeft") {
-      globalState.image.x--;
+      state.image.x--;
       event.preventDefault();
       return;
     }
     if (event.key === "ArrowUp") {
-      globalState.image.y--;
+      state.image.y--;
       event.preventDefault();
       return;
     }
     if (event.key === "ArrowDown") {
-      globalState.image.y++;
+      state.image.y++;
       event.preventDefault();
       return;
     }
