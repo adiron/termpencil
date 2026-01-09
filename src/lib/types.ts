@@ -6,6 +6,7 @@ export interface Tool {
   name: string;
   optionsComponent?: Component<any>;
   onClick(index: number, state: GlobalState, x: number, y: number): void;
+  onMouseUp(index: number, state: GlobalState, x: number, y: number): void;
   onDrag(index: number, state: GlobalState, x: number, y: number): void;
   onKeyDown(event: KeyboardEvent, state: GlobalState): void;
   showSelection?: boolean;
@@ -38,3 +39,8 @@ export interface GlobalState {
 
   editorHasKeyboard: boolean;
 }
+
+// Utility to make tuple of the same type of length N.
+// Example: a: TupLen<2, number>
+export type TupLen<N extends number, T = any, A extends T[] = []> =
+  N extends A['length'] ? A : TupLen<N, T, [T, ...A]>;

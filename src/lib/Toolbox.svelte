@@ -6,7 +6,8 @@
   import Cell from "./Cell.svelte";
   import type { Tool } from "./types";
   import Button from "./Button.svelte";
-    import { OverlayTool } from "./tools/OverlayTool.svelte";
+  import { OverlayTool } from "./tools/OverlayTool.svelte";
+  import { BoxTool } from "./tools/BoxTool.svelte";
 
   const { palette } = globalState;
 
@@ -14,6 +15,7 @@
     ["Cursor", new CursorTool()],
     ["Brush", new BrushTool()],
     ["Eyedropper", new EyedropperTool()],
+    ["Box", new BoxTool()],
     ["Overlay", new OverlayTool()],
   ];
 </script>
@@ -101,14 +103,14 @@
   </div>
 
   {#key globalState.tool}
-  {#if globalState.tool.optionsComponent}
-    <div class="section options-section">
-      <h3>Tool Options</h3>
-      <div class="options-content">
-        <globalState.tool.optionsComponent tool={globalState.tool} />
+    {#if globalState.tool.optionsComponent}
+      <div class="section options-section">
+        <h3>Tool Options</h3>
+        <div class="options-content">
+          <globalState.tool.optionsComponent tool={globalState.tool} />
+        </div>
       </div>
-    </div>
-  {/if}
+    {/if}
   {/key}
 </div>
 

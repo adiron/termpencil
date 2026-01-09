@@ -28,6 +28,11 @@
     globalState.tool.onClick(idx, globalState, event.clientX, event.clientY);
   }
 
+  function cellMouseUp(event: MouseEvent, idx: number) {
+    if (!globalState.tool.onMouseUp) return;
+    globalState.tool.onMouseUp(idx, globalState, event.clientX, event.clientY);
+  }
+
   function handleKey(e: KeyboardEvent) {
     if (!globalState.editorHasKeyboard) return;
 
@@ -98,6 +103,7 @@
                       idx === globalState.caret}
                     onmouseover={(e) => cellMouseOver(e, idx)}
                     onmousedown={(e) => cellMouseClick(e, idx)}
+                    onmouseup={(e) => cellMouseUp(e, idx)}
                     char={styledChar.codepoint}
                   />
                 {/if}

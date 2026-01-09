@@ -9,6 +9,7 @@
     char: number | string | null;
     onmouseover?: (e: MouseEvent) => void;
     onmousedown?: (e: MouseEvent) => void;
+    onmouseup?: (e: MouseEvent) => void;
     title?: string;
     onclick?: (e: MouseEvent) => void;
     selected?: boolean;
@@ -21,6 +22,7 @@
     bg,
     char,
     onmousedown,
+    onmouseup,
     onmouseover,
     onclick,
     selected,
@@ -46,6 +48,7 @@
   aria-label={label}
   {onmouseover}
   {onmousedown}
+  {onmouseup}
   {onclick}
   {title}
   class={{
