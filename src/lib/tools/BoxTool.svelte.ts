@@ -207,13 +207,13 @@ export class BoxTool implements Tool {
   showSelection = false;
   optionsComponent = BoxOptions;
 
-  boxState: BoxState = {
+  boxState: BoxState = $state({
     presets: BOX_PRESETS,
     currentPreset: null,
     mouseDown: false,
     p1: undefined,
     p2: undefined,
-  }
+  })
 
   onClick(index: number, state: GlobalState): void {
     const x = index % state.buffer.width;
