@@ -1,8 +1,6 @@
 <script lang="ts">
-  import Cell from "./Cell.svelte";
-  import OverlayImage from "./OverlayImage.svelte";
-  import { getCharAt, getRowCount } from "./screenbuffer";
   import { globalState } from "./state.svelte";
+  import Display from "./Display.svelte";
   import { shiftColor } from "./utils.svelte";
 
   let hoverTarget: number | null = $state(null);
@@ -82,35 +80,16 @@
   <div class="editor-area">
     <div class="editor-container">
       <div class="display-wrapper">
-        <div class="display">
-          {#if globalState.image.data}
-            <OverlayImage />
-          {/if}
-          {#each { length: getRowCount(globalState.buffer) }, rowI}
-            <div class="row">
-              {#each { length: globalState.buffer.width }, colI}
-                {@const idx = colI + rowI * globalState.buffer.width}
-                {#if idx <= globalState.buffer.chars.length}
-                  {@const styledChar = getCharAt(
-                    globalState.buffer,
-                    colI,
-                    rowI,
-                  )}
-                  <Cell
-                    fg={styledChar.fg}
-                    bg={styledChar.bg}
-                    selected={globalState.tool.showSelection &&
-                      idx === globalState.caret}
-                    onmouseover={(e) => cellMouseOver(e, idx)}
-                    onmousedown={(e) => cellMouseClick(e, idx)}
-                    onmouseup={(e) => cellMouseUp(e, idx)}
-                    char={styledChar.codepoint}
-                  />
-                {/if}
-              {/each}
-            </div>
-          {/each}
-        </div>
+        <Display
+          buffer={globalState.buffer}
+          charSize={globalState.charSize}
+          caret={globalState.caret}
+          showSelection={globalState.tool.showSelection}
+          image={globalState.image}
+          onCellDown={cellMouseClick}
+          onCellUp={cellMouseUp}
+          onCellOver={cellMouseOver}
+        />
       </div>
 
       <div class="status">
@@ -166,23 +145,10 @@
     margin-bottom: 1rem;
   }
 
-  .display {
-    outline: 1px solid var(--color-14);
-    display: inline-block;
-    position: relative;
-    user-select: none;
-    overflow: hidden;
-  }
-
   .status {
     width: 100%;
     text-align: center;
     color: var(--color-8);
     font-size: 0.8rem;
-  }
-
-  .row {
-    display: table-row;
-    height: calc(var(--height) * 1px);
   }
 </style>

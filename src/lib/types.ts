@@ -12,6 +12,14 @@ export interface Tool {
   showSelection?: boolean;
 }
 
+export interface DisplayImage {
+  data: ArrayBuffer | null;
+  x: number;
+  y: number;
+  scale: number;
+  opacity: number;
+}
+
 export interface GlobalState {
   buffer: ScreenBuffer;
   tool: Tool;
@@ -29,13 +37,7 @@ export interface GlobalState {
   bg: Color | undefined;
   char: number | null;
 
-  image: {
-    data: ArrayBuffer | null;
-    x: number;
-    y: number;
-    scale: number;
-    opacity: number;
-  }
+  image: DisplayImage;
 
   editorHasKeyboard: boolean;
 }

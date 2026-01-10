@@ -1,9 +1,13 @@
 <script lang="ts">
-  import { globalState } from "./state.svelte";
+  import type { DisplayImage } from "./types";
+
+  type Props = DisplayImage;
+
+  let { data, x, y, scale, opacity }: Props = $props();
 
   const blobUri: string = $derived.by(() => {
-    if (globalState.image.data === null) return "";
-    const b = new Blob([globalState.image.data]);
+    if (data === null) return "";
+    const b = new Blob([data as unknown as BlobPart]);
     return URL.createObjectURL(b);
   });
 </script>
@@ -11,8 +15,8 @@
 <img
   src={blobUri}
   alt="overlaid graphic"
-  style:transform={`translate(${globalState.image.x}px, ${globalState.image.y}px) scale(${globalState.image.scale})`}
-  style:opacity={globalState.image.opacity}
+  style:transform={`translate(${x}px, ${y}px) scale(${scale})`}
+  style:opacity
 />
 
 <style lang="scss">
