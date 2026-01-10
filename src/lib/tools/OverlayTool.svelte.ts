@@ -5,12 +5,12 @@ export class OverlayTool implements Tool {
   name = "overlay";
   showSelection = false;
 
-  lastMousePos: [number,number] = [0,0];
+  lastMousePos: [number, number] = [0, 0];
 
   optionsComponent = OverlayOptions;
 
   onClick(_index: number, _state: GlobalState, x: number, y: number): void {
-    this.lastMousePos = [x,y];
+    this.lastMousePos = [x, y];
   }
 
   onDrag(_index: number, state: GlobalState, x: number, y: number): void {
@@ -18,7 +18,11 @@ export class OverlayTool implements Tool {
     const delta = [this.lastMousePos[0] - x, this.lastMousePos[1] - y];
     state.image.x -= delta[0];
     state.image.y -= delta[1];
-    this.lastMousePos = [x,y];
+    this.lastMousePos = [x, y];
+  }
+
+  onMouseUp(index: number, state: GlobalState, x: number, y: number): void {
+    // nothing
   }
 
   onKeyDown(event: KeyboardEvent, state: GlobalState): void {

@@ -33,6 +33,10 @@ export class BrushTool implements Tool {
     }
   }
 
+  onMouseUp(index: number, state: GlobalState, x: number, y: number): void {
+    // nothing
+  }
+
   private paint(index: number, state: GlobalState): void {
     if (index < 0 || index >= state.buffer.chars.length) return;
     const char = state.buffer.chars[index];
