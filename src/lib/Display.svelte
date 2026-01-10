@@ -33,25 +33,23 @@
     onCellDown,
     onCellUp,
   }: Props = $props();
-
-  let displayBuffer = $derived.by(() => {
-    if (editBuffer) {
-      return mergeScreenBuffers(buffer, editBuffer);
-    }
-    return buffer;
-  });
 </script>
 
 <div class="display" style:--width={charSize[0]} style:--height={charSize[1]}>
   {#if image && image.data}
     <OverlayImage {...image} />
   {/if}
-  {#each { length: getRowCount(displayBuffer) }, rowI}
+  {#each { length: getRowCount(buffer) }, rowI}
     <div class="row">
-      {#each { length: displayBuffer.width }, colI}
-        {@const idx = colI + rowI * displayBuffer.width}
-        {#if idx <= displayBuffer.chars.length}
-          {@const styledChar = getCharAt(displayBuffer, colI, rowI)}
+      {#each { length: buffer.width }, colI}
+        {@const idx = colI + rowI * buffer.width}
+        {#if idx <= buffer.chars.length}
+          {@const baseChar = getCharAt(buffer, colI, rowI)}
+          {@const editChar = editBuffer
+            ? getCharAt(editBuffer, colI, rowI)
+            : undefined}
+          {@const styledChar = editChar ?? baseChar}
+
           {#if styledChar === undefined}
             <div class="cell cell--transparent"></div>
           {:else}
