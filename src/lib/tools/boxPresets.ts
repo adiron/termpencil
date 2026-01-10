@@ -1,39 +1,41 @@
 import type { Color } from "../screenbuffer";
-import type { BoxPreset } from "./BoxTool.svelte";
+import type { TupLen } from "../types";
 
 export const FG = Symbol("fg");
 export const BG = Symbol("bg");
 
-export function makeResolver(
-  fg: Color | undefined,
-  bg: Color | undefined,
-) {
-  const walk = (v: unknown): unknown => {
-    // Replace symbols
-    if (typeof v === "symbol") {
-      if (v === FG) return fg;
-      if (v === BG) return bg;
-      throw new Error(`Unknown symbol placeholder: ${String(v)}`);
-    }
+export type Fill<T> = {
+  codepoint: number | null,
+  fg: Color | undefined | T;
+  bg: Color | undefined | T;
+} | null
 
-    if (v === null || v === undefined) return v;
-    if (typeof v !== "object") return v;
+export type FrameOptions<T = undefined> = FrameOptionsAll<T> | FrameOptionsSpecific<T>;
 
-    if (Array.isArray(v)) return v.map(walk);
-
-    // Plain object
-    const out: Record<PropertyKey, unknown> = {};
-    for (const k of Reflect.ownKeys(v)) {
-      out[k] = walk((v as any)[k]);
-    }
-    return out;
-  };
-
-  return (preset: BoxPreset<Symbol>): BoxPreset<undefined> =>
-    walk(preset) as BoxPreset<undefined>
+export interface FrameOptionsAll<T = undefined> {
+  all: Fill<T>;
 }
 
-const BASE_PRESETS: BoxPreset<Symbol>[] = [
+export interface FrameOptionsSpecific<T = undefined> {
+  edge: TupLen<4, Fill<T>> | Fill<T>;
+  corner: TupLen<4, Fill<T>> | Fill<T>;
+}
+
+export interface FrameOptionsExpanded<T = undefined> {
+  edge: TupLen<4, Fill<T>>;
+  corner: TupLen<4, Fill<T>>;
+}
+
+export interface BoxPreset<T = undefined> {
+  color: Fill<T>;
+  frame?: FrameOptions<T>;
+  shadow?: {
+    offset: [number, number];
+    color: Fill<T>;
+  }
+}
+
+export const BOX_PRESETS: BoxPreset<Symbol>[] = [
   // Just a fill
   {
     color: {
@@ -136,7 +138,3 @@ const BASE_PRESETS: BoxPreset<Symbol>[] = [
   }
 ];
 
-export function getPresets(fg: Color | undefined, bg: Color | undefined) {
-  const resolver = makeResolver(fg, bg);
-  return BASE_PRESETS.map(resolver)
-}

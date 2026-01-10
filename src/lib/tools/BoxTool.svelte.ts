@@ -1,43 +1,43 @@
 import { setCharAt, setCharsAt, type Color } from '../screenbuffer';
 import type { Tool, GlobalState, TupLen } from '../types';
 import BoxOptions from './BoxOptions.svelte';
+import { BG, BOX_PRESETS, FG, type BoxPreset, type FrameOptions, type FrameOptionsExpanded } from './boxPresets';
 
-export type Fill<T> = {
-  codepoint: number | null,
-  fg: Color | undefined | T;
-  bg: Color | undefined | T;
-} | null
-
-type FrameOptions<T = undefined> = FrameOptionsAll<T> | FrameOptionsSpecific<T>;
-
-interface FrameOptionsAll<T = undefined> {
-  all: Fill<T>;
-}
-
-interface FrameOptionsSpecific<T = undefined> {
-  edge: TupLen<4, Fill<T>> | Fill<T>;
-  corner: TupLen<4, Fill<T>> | Fill<T>;
-}
-
-interface FrameOptionsExpanded<T = undefined> {
-  edge: TupLen<4, Fill<T>>;
-  corner: TupLen<4, Fill<T>>;
-}
-
-export interface BoxPreset<T = undefined> {
-  color: Fill<T>;
-  frame?: FrameOptions<T>;
-  shadow?: {
-    offset: [number, number];
-    color: Fill<T>;
-  }
-}
 
 interface BoxState {
-  preset: BoxPreset | null;
+  currentPreset: BoxPreset<Symbol> | null;
+  presets: BoxPreset<Symbol>[];
   mouseDown: boolean;
   p1: [number, number] | undefined;
   p2: [number, number] | undefined;
+}
+
+export function makeResolver(
+  fg: Color | undefined,
+  bg: Color | undefined,
+) {
+  const walk = (v: unknown): unknown => {
+    if (typeof v === "symbol") {
+      if (v === FG) return fg;
+      if (v === BG) return bg;
+      throw new Error(`Unknown symbol placeholder: ${String(v)}`);
+    }
+
+    if (v === null || v === undefined) return v;
+    if (typeof v !== "object") return v;
+
+    if (Array.isArray(v)) return v.map(walk);
+
+    // Plain object needs to be walked through
+    const out: Record<PropertyKey, unknown> = {};
+    for (const k of Reflect.ownKeys(v)) {
+      out[k] = walk((v as any)[k]);
+    }
+    return out;
+  };
+
+  return (preset: BoxPreset<Symbol>): BoxPreset<undefined> =>
+    walk(preset) as BoxPreset<undefined>
 }
 
 function fourTimes<T>(o: T): TupLen<4, T> {
@@ -64,7 +64,8 @@ export class BoxTool implements Tool {
   optionsComponent = BoxOptions;
 
   boxState: BoxState = {
-    preset: null,
+    presets: BOX_PRESETS,
+    currentPreset: null,
     mouseDown: false,
     p1: undefined,
     p2: undefined,
@@ -95,10 +96,12 @@ export class BoxTool implements Tool {
 
   private paint(state: GlobalState): void {
     if (this.boxState.p1 === undefined || this.boxState.p2 === undefined) return;
-    if (this.boxState.preset === null) {
+    if (this.boxState.currentPreset === null) {
       console.log("No preset")
       return;
     }
+
+    const resolvedPreset = makeResolver(state.fg, state.bg)(this.boxState.currentPreset);
 
     const origin = [
       Math.min(this.boxState.p1[0], this.boxState.p2[0]),
@@ -109,8 +112,8 @@ export class BoxTool implements Tool {
       Math.abs(this.boxState.p1[1] - this.boxState.p2[1]) + 1,
     ];
 
-    if (this.boxState.preset.shadow) {
-      const { offset, color } = this.boxState.preset.shadow;
+    if (resolvedPreset.shadow) {
+      const { offset, color } = resolvedPreset.shadow;
       if (color) {
         for (let y = 0; y < size[1]; y++) {
           setCharsAt(
@@ -124,9 +127,9 @@ export class BoxTool implements Tool {
     }
 
     // Fill
-    if (this.boxState.preset.color) {
-      const fillChar = this.boxState.preset.color;
-      const hasFrame = !!this.boxState.preset.frame;
+    if (resolvedPreset.color) {
+      const fillChar = resolvedPreset.color;
+      const hasFrame = !!resolvedPreset.frame;
 
       const yStart = hasFrame ? 1 : 0;
       const yEnd = hasFrame ? size[1] - 1 : size[1];
@@ -145,8 +148,8 @@ export class BoxTool implements Tool {
       }
     }
 
-    if (this.boxState.preset.frame) {
-      const frameOptions = expandFrameOptions(this.boxState.preset.frame)
+    if (resolvedPreset.frame) {
+      const frameOptions = expandFrameOptions(resolvedPreset.frame)
 
       if (frameOptions.corner) {
         // Top-left corner
