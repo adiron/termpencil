@@ -1,14 +1,18 @@
 <script lang="ts">
   import Display from "../Display.svelte";
-  import { makeEmptyScreenBuffer, type ScreenBuffer } from "../screenbuffer";
+  import {
+    makeEmptyScreenBuffer,
+    type StyledChar,
+    type ScreenBuffer,
+  } from "../screenbuffer";
   import { globalState } from "../state.svelte";
   import { paintBox, type BoxTool } from "./BoxTool.svelte";
 
   let { tool }: { tool: BoxTool } = $props();
 
-  let buffers: ScreenBuffer[] = $derived.by(() => {
+  let buffers: ScreenBuffer<StyledChar|undefined>[] = $derived.by(() => {
     return tool.boxState.presets.map((preset) => {
-      const buff = makeEmptyScreenBuffer(5, 5);
+      const buff = makeEmptyScreenBuffer<StyledChar | undefined>(5, 5, undefined);
       paintBox(buff, [0, 0], [3, 3], preset, globalState.fg, globalState.bg);
       return buff;
     });
@@ -42,7 +46,7 @@
     display: block;
     padding: 8px;
 
-    &.preset--selected {
+    &--selected {
       background-color: var(--color-12);
     }
   }

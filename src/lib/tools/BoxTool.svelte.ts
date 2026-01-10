@@ -1,7 +1,8 @@
-import { setCharAt, setCharsAt, type Color, type ScreenBuffer } from '../screenbuffer';
+import { setCharAt, setCharsAt, type Color, type ScreenBuffer, makeEmptyScreenBuffer, getRowCount } from '../screenbuffer';
 import type { Tool, GlobalState, TupLen } from '../types';
 import BoxOptions from './BoxOptions.svelte';
 import { BG, BOX_PRESETS, FG, type BoxPreset, type FrameOptions, type FrameOptionsExpanded } from './boxPresets';
+import { flushEditBuffer } from '../state.svelte';
 
 
 interface BoxState {
@@ -59,7 +60,7 @@ function expandFrameOptions(options: FrameOptions): FrameOptionsExpanded {
 }
 
 export function paintBox(
-  buffer: ScreenBuffer,
+  buffer: ScreenBuffer<any>,
   p1: [number, number],
   p2: [number, number],
   preset: BoxPreset<Symbol>,
@@ -220,33 +221,39 @@ export class BoxTool implements Tool {
     const y = Math.floor(index / state.buffer.width);
     this.boxState.p1 = [x, y];
     this.boxState.p2 = undefined;
+    // Clear preview when starting new click sequence if needed
+    state.editBuffer = makeEmptyScreenBuffer(state.buffer.width, getRowCount(state.buffer), undefined);
   }
 
   onMouseUp(index: number, state: GlobalState): void {
     const x = index % state.buffer.width;
     const y = Math.floor(index / state.buffer.width);
     this.boxState.p2 = [x, y];
-    this.paint(state);
+
+    this.updatePreview(state);
+    flushEditBuffer(state);
   }
 
   onDrag(index: number, state: GlobalState): void {
     const x = index % state.buffer.width;
     const y = Math.floor(index / state.buffer.width);
     this.boxState.p2 = [x, y];
+
+    this.updatePreview(state);
   }
 
   onKeyDown(event: KeyboardEvent, state: GlobalState): void {
   }
 
-  private paint(state: GlobalState): void {
+  private updatePreview(state: GlobalState): void {
     if (this.boxState.p1 === undefined || this.boxState.p2 === undefined) return;
-    if (this.boxState.currentPreset === null) {
-      console.log("No preset")
-      return;
-    }
+    if (this.boxState.currentPreset === null) return;
+
+    // Reset edit buffer to transparent
+    state.editBuffer = makeEmptyScreenBuffer(state.buffer.width, getRowCount(state.buffer), undefined);
 
     paintBox(
-      state.buffer,
+      state.editBuffer,
       this.boxState.p1,
       this.boxState.p2,
       this.boxState.currentPreset,

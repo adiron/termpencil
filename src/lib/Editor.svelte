@@ -82,6 +82,7 @@
       <div class="display-wrapper">
         <Display
           buffer={globalState.buffer}
+          editBuffer={globalState.editBuffer}
           charSize={globalState.charSize}
           caret={globalState.caret}
           showSelection={globalState.tool.showSelection}

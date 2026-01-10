@@ -4,6 +4,7 @@
 
 import type { Tool, GlobalState } from '../types';
 import BrushOptions from './BrushOptions.svelte';
+import { flushEditBuffer } from '../state.svelte';
 
 type PaintMode = "both" | "char" | "color"
 
@@ -34,19 +35,32 @@ export class BrushTool implements Tool {
   }
 
   onMouseUp(index: number, state: GlobalState, x: number, y: number): void {
-    // nothing
+    flushEditBuffer(state);
   }
 
   private paint(index: number, state: GlobalState): void {
     if (index < 0 || index >= state.buffer.chars.length) return;
-    const char = state.buffer.chars[index];
+
+    // Read from existing buffer to preserve state (since overlay replaces)
+    const baseChar = state.buffer.chars[index];
+    const newChar = { ...baseChar };
+
+    // Check if we already have a char in editBuffer (accumulate changes)
+    const existingEditChar = state.editBuffer.chars[index];
+    if (existingEditChar) {
+      Object.assign(newChar, existingEditChar);
+    }
+
     if (this.paintMode === "both" || this.paintMode === "color") {
-      char.fg = state.fg;
-      char.bg = state.bg;
+      newChar.fg = state.fg;
+      newChar.bg = state.bg;
     }
     if ((this.paintMode === "both" || this.paintMode === "char")
       && state.char !== null) {
-      char.codepoint = state.char;
+      newChar.codepoint = state.char;
     }
+
+    // Write to editBuffer
+    state.editBuffer.chars[index] = newChar;
   }
 }

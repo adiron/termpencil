@@ -1,7 +1,7 @@
 <script lang="ts">
   import Button from "./Button.svelte";
   import Modal from "./Modal.svelte";
-  import { resizeScreenBuffer } from "./screenbuffer";
+  import { DEFAULT_CHAR, makeEmptyScreenBuffer, resizeScreenBuffer } from "./screenbuffer";
   import { globalState } from "./state.svelte";
 
   interface Props {
@@ -30,11 +30,12 @@
           globalState.buffer,
           newWidth,
           newHeight,
+          DEFAULT_CHAR,
         );
+        globalState.editBuffer = makeEmptyScreenBuffer(newWidth, newHeight, undefined);
         onclose();
       }}
       text="Resize"
     />
   </Modal>
 {/if}
-

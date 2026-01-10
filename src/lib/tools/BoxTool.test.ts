@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { FG, BG } from './boxPresets';
 import { makeResolver, paintBox } from './BoxTool.svelte';
-import { makeEmptyScreenBuffer, getCharAt } from '../screenbuffer';
+import { makeEmptyScreenBuffer, getCharAt, DEFAULT_CHAR } from '../screenbuffer';
 
 describe('makeResolver', () => {
   it('flattens symbols correctly', () => {
@@ -82,7 +82,7 @@ describe('makeResolver', () => {
 
 describe('paintBox', () => {
   it('draws a box correctly', () => {
-    const buffer = makeEmptyScreenBuffer(10, 10);
+    const buffer = makeEmptyScreenBuffer(10, 10, DEFAULT_CHAR);
     const p1: [number, number] = [2, 2];
     const p2: [number, number] = [6, 6];
     const fg = 1;

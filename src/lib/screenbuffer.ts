@@ -1,5 +1,7 @@
 import { concatUint8Arrays } from "./utils";
 
+export const DEFAULT_CHAR: StyledChar = { codepoint: null, fg: undefined, bg: undefined };
+
 // Color is either a number (index in palette) or an RGB tuple
 export type Color = number;
 
@@ -9,18 +11,18 @@ export interface StyledChar {
   bg: Color | undefined;
 }
 
-export interface ScreenBuffer {
-  chars: StyledChar[];
+export interface ScreenBuffer<T = StyledChar> {
+  chars: T[];
   width: number;
 }
 
-export function getRowCount(buffer: ScreenBuffer): number {
+export function getRowCount(buffer: ScreenBuffer<any>): number {
   if (buffer.width === 0) return 0;
   return Math.ceil(buffer.chars.length / buffer.width);
 }
 
 // Generates a pure string (just the text, disregarding color)
-export function screenBufferToString(buffer: ScreenBuffer): string {
+export function screenBufferToString(buffer: ScreenBuffer<StyledChar>): string {
   let output = "";
   for (let i = 0; i < buffer.chars.length; i++) {
     if (i > 0 && i % buffer.width === 0) {
@@ -36,7 +38,7 @@ export function screenBufferToString(buffer: ScreenBuffer): string {
   return output;
 }
 
-export function getCharAt(buffer: ScreenBuffer, x: number, y: number): StyledChar {
+export function getCharAt<T>(buffer: ScreenBuffer<T>, x: number, y: number): T {
   if (x < 0 || x >= buffer.width || y < 0) {
     throw new Error(`Beyond index: ${x}, ${y}`);
   }
@@ -50,7 +52,7 @@ export function getCharAt(buffer: ScreenBuffer, x: number, y: number): StyledCha
   return buffer.chars[idx];
 }
 
-export function setCharAt(buffer: ScreenBuffer, x: number, y: number, char: StyledChar): void {
+export function setCharAt<T>(buffer: ScreenBuffer<T>, x: number, y: number, char: T): void {
   if (x < 0 || x >= buffer.width || y < 0) {
     throw new Error(`Beyond index: ${x}, ${y}`);
   }
@@ -64,7 +66,7 @@ export function setCharAt(buffer: ScreenBuffer, x: number, y: number, char: Styl
   buffer.chars[idx] = char;
 }
 
-export function setCharsAt(buffer: ScreenBuffer, x: number, y: number, chars: StyledChar[]): void {
+export function setCharsAt<T>(buffer: ScreenBuffer<T>, x: number, y: number, chars: T[]): void {
   let currentX = x;
   let currentY = y;
 
@@ -132,21 +134,51 @@ export function renderToTerminal(buffer: ScreenBuffer): string {
   return output;
 }
 
-export function makeEmptyScreenBuffer(width: number, height: number): ScreenBuffer {
+export function makeEmptyScreenBuffer<T>(width: number, height: number, initialValue: T): ScreenBuffer<T> {
   return {
-    chars: Array.from({ length: width * height }, () => ({ codepoint: null, fg: undefined, bg: undefined })),
+    chars: Array.from({ length: width * height }, () => (
+      // This is here because objects must be cloned to prevent
+      // referencing the same object in all cells.
+      (typeof initialValue === "object" && initialValue !== null)
+        ? { ...initialValue }
+        : initialValue
+    )),
     width: width
   };
 }
 
-export function resizeScreenBuffer(buffer: ScreenBuffer, width: number, height: number): ScreenBuffer {
+export function mergeScreenBuffers<T>(
+  base: ScreenBuffer<T>,
+  overlay: ScreenBuffer<T | undefined>
+): ScreenBuffer<T> {
+  if (base.width !== overlay.width) {
+    throw new Error(`Buffer widths do not match: ${base.width} vs ${overlay.width}`);
+  }
+  if (base.chars.length !== overlay.chars.length) {
+    throw new Error(`Buffer lengths do not match: ${base.chars.length} vs ${overlay.chars.length}`);
+  }
+
+  const newChars = new Array(base.chars.length);
+
+  for (let i = 0; i < base.chars.length; i++) {
+    // If overlay[i] is NOT undefined, it strictly replaces base[i]
+    newChars[i] = overlay.chars[i] ?? base.chars[i];
+  }
+
+  return {
+    chars: newChars,
+    width: base.width,
+  };
+}
+
+export function resizeScreenBuffer<T>(buffer: ScreenBuffer<T>, width: number, height: number, initialValue: T): ScreenBuffer<T> {
   // No resizing needed
   if (width === buffer.width &&
     height === Math.ceil(buffer.chars.length / width)) {
     return buffer;
   }
 
-  const newbuf = makeEmptyScreenBuffer(width, height);
+  const newbuf = makeEmptyScreenBuffer(width, height, initialValue);
 
   const minWidth = Math.min(buffer.width, width);
   const minHeight = Math.min(getRowCount(buffer), height);

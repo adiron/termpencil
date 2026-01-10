@@ -1,4 +1,4 @@
-import type { ScreenBuffer, Color } from './screenbuffer';
+import type { ScreenBuffer, StyledChar, Color } from "./screenbuffer";
 
 import type { Component } from 'svelte';
 
@@ -40,6 +40,8 @@ export interface GlobalState {
   image: DisplayImage;
 
   editorHasKeyboard: boolean;
+
+  editBuffer: ScreenBuffer<StyledChar | undefined>;
 }
 
 // Utility to make tuple of the same type of length N.
