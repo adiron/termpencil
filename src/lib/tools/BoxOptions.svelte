@@ -16,22 +16,28 @@
 </script>
 
 <div class="tool-options">
-  Presets:
-  {#each tool.boxState.presets as preset, i}
-    <button
-      class={{
-        preset: true,
-        "preset--selected": tool.boxState.currentPreset === preset,
-      }}
-      onclick={() => (tool.boxState.currentPreset = preset)}
-    >
-      Preset {i}
-      <Display buffer={buffers[i]} charSize={[10, 10]} />
-    </button>
-  {/each}
+  <div class="preset-list">
+    {#each tool.boxState.presets as preset, i}
+      <button
+        class={{
+          preset: true,
+          "preset--selected": tool.boxState.currentPreset === preset,
+        }}
+        onclick={() => (tool.boxState.currentPreset = preset)}
+      >
+        Preset {i}
+        <Display buffer={buffers[i]} charSize={[10, 10]} />
+      </button>
+    {/each}
+  </div>
 </div>
 
 <style lang="scss">
+  .preset-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
   .preset {
     display: block;
     padding: 8px;
