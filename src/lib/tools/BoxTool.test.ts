@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { FG, BG } from './boxPresets';
-import { makeResolver, } from './BoxTool.svelte';
+import { makeResolver, paintBox } from './BoxTool.svelte';
+import { makeEmptyScreenBuffer, getCharAt } from '../screenbuffer';
 
 describe('makeResolver', () => {
   it('flattens symbols correctly', () => {
@@ -76,5 +77,51 @@ describe('makeResolver', () => {
     const input = { val: UnknownSym };
 
     expect(() => resolver(input as any)).toThrow(/Unknown symbol/);
+  });
+});
+
+describe('paintBox', () => {
+  it('draws a box correctly', () => {
+    const buffer = makeEmptyScreenBuffer(10, 10);
+    const p1: [number, number] = [2, 2];
+    const p2: [number, number] = [6, 6];
+    const fg = 1;
+    const bg = 2;
+
+    const preset = {
+      frame: {
+        all: {
+          codepoint: 35, // '#'
+          fg: FG,
+          bg: BG
+        }
+      },
+      color: {
+        codepoint: 46, // '.'
+        fg: FG,
+        bg: BG
+      }
+    };
+
+    paintBox(buffer, p1, p2, preset as any, fg, bg);
+
+    // Check corners
+    const topLeft = getCharAt(buffer, 2, 2);
+    expect(topLeft.codepoint).toBe(35);
+    expect(topLeft.fg).toBe(fg);
+    expect(topLeft.bg).toBe(bg);
+
+    const bottomRight = getCharAt(buffer, 6, 6);
+    expect(bottomRight.codepoint).toBe(35);
+
+    // Check fill
+    const mid = getCharAt(buffer, 4, 4);
+    expect(mid.codepoint).toBe(46);
+    expect(mid.fg).toBe(fg);
+    expect(mid.bg).toBe(bg);
+
+    // Check outside
+    const outside = getCharAt(buffer, 1, 1);
+    expect(outside.codepoint).toBe(null);
   });
 });

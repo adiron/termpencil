@@ -11,6 +11,7 @@
     <button onclick={() => tool.boxState.currentPreset = preset}>
       Preset {i}
     </button>
+    
   {/each}
 </div>
 

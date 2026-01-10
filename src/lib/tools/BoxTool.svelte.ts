@@ -1,4 +1,4 @@
-import { setCharAt, setCharsAt, type Color } from '../screenbuffer';
+import { setCharAt, setCharsAt, type Color, type ScreenBuffer } from '../screenbuffer';
 import type { Tool, GlobalState, TupLen } from '../types';
 import BoxOptions from './BoxOptions.svelte';
 import { BG, BOX_PRESETS, FG, type BoxPreset, type FrameOptions, type FrameOptionsExpanded } from './boxPresets';
@@ -58,6 +58,150 @@ function expandFrameOptions(options: FrameOptions): FrameOptionsExpanded {
   }
 }
 
+export function paintBox(
+  buffer: ScreenBuffer,
+  p1: [number, number],
+  p2: [number, number],
+  preset: BoxPreset<Symbol>,
+  fg: Color | undefined,
+  bg: Color | undefined
+) {
+  const resolvedPreset = makeResolver(fg, bg)(preset);
+
+  const origin = [
+    Math.min(p1[0], p2[0]),
+    Math.min(p1[1], p2[1]),
+  ];
+  const size = [
+    Math.abs(p1[0] - p2[0]) + 1,
+    Math.abs(p1[1] - p2[1]) + 1,
+  ];
+
+  if (resolvedPreset.shadow) {
+    const { offset, color } = resolvedPreset.shadow;
+    if (color) {
+      for (let y = 0; y < size[1]; y++) {
+        setCharsAt(
+          buffer,
+          origin[0] + offset[0],
+          origin[1] + offset[1] + y,
+          Array.from({ length: size[0] }, () => color)
+        );
+      }
+    }
+  }
+
+  // Fill
+  if (resolvedPreset.color) {
+    const fillChar = resolvedPreset.color;
+    const hasFrame = !!resolvedPreset.frame;
+
+    const yStart = hasFrame ? 1 : 0;
+    const yEnd = hasFrame ? size[1] - 1 : size[1];
+    const xOffset = hasFrame ? 1 : 0;
+    const drawWidth = hasFrame ? size[0] - 2 : size[0];
+
+    if (drawWidth > 0) {
+      for (let y = yStart; y < yEnd; y++) {
+        setCharsAt(
+          buffer,
+          origin[0] + xOffset,
+          origin[1] + y,
+          Array.from({ length: drawWidth }, () => fillChar)
+        );
+      }
+    }
+  }
+
+  if (resolvedPreset.frame) {
+    const frameOptions = expandFrameOptions(resolvedPreset.frame)
+
+    if (frameOptions.corner) {
+      // Top-left corner
+      if (frameOptions.corner[0] !== null) {
+        setCharAt(
+          buffer,
+          origin[0],
+          origin[1],
+          frameOptions.corner[0],
+        )
+      }
+      // Top-right corner
+      if (frameOptions.corner[1] !== null) {
+        setCharAt(
+          buffer,
+          origin[0] + size[0] - 1,
+          origin[1],
+          frameOptions.corner[1],
+        )
+      }
+      // Bottom-right corner
+      if (frameOptions.corner[2] !== null) {
+        setCharAt(
+          buffer,
+          origin[0] + size[0] - 1,
+          origin[1] + size[1] - 1,
+          frameOptions.corner[2],
+        )
+      }
+      // Bottom-left corner
+      if (frameOptions.corner[3] !== null) {
+        setCharAt(
+          buffer,
+          origin[0],
+          origin[1] + size[1] - 1,
+          frameOptions.corner[3],
+        )
+      }
+    }
+
+    if (frameOptions.edge) {
+      // Top border
+      if (frameOptions.edge[0] !== null) {
+        setCharsAt(
+          buffer,
+          origin[0] + 1,
+          origin[1],
+          Array.from({ length: size[0] - 2 }, () => frameOptions.edge[0]!)
+        );
+      }
+      // Right border
+      if (frameOptions.edge[1] !== null) {
+        for (let i = 1; i < size[1] - 1; i++) {
+          setCharAt(
+            buffer,
+            origin[0] + size[0] - 1,
+            origin[1] + i,
+            frameOptions.edge[1]!
+          );
+        }
+      }
+      // Bottom border
+      if (frameOptions.edge[2] !== null) {
+        setCharsAt(
+          buffer,
+          origin[0] + 1,
+          origin[1] + size[1] - 1,
+          Array.from({ length: size[0] - 2 }, () => frameOptions.edge[2]!)
+        );
+      }
+      // Left border
+      if (frameOptions.edge[3] !== null) {
+        for (let i = 1; i < size[1] - 1; i++) {
+          setCharAt(
+            buffer,
+            origin[0],
+            origin[1] + i,
+            frameOptions.edge[3]!
+          );
+        }
+      }
+    }
+
+  }
+}
+
+
 export class BoxTool implements Tool {
   name = "brush";
   showSelection = false;
@@ -101,138 +245,13 @@ export class BoxTool implements Tool {
       return;
     }
 
-    const resolvedPreset = makeResolver(state.fg, state.bg)(this.boxState.currentPreset);
-
-    const origin = [
-      Math.min(this.boxState.p1[0], this.boxState.p2[0]),
-      Math.min(this.boxState.p1[1], this.boxState.p2[1]),
-    ];
-    const size = [
-      Math.abs(this.boxState.p1[0] - this.boxState.p2[0]) + 1,
-      Math.abs(this.boxState.p1[1] - this.boxState.p2[1]) + 1,
-    ];
-
-    if (resolvedPreset.shadow) {
-      const { offset, color } = resolvedPreset.shadow;
-      if (color) {
-        for (let y = 0; y < size[1]; y++) {
-          setCharsAt(
-            state.buffer,
-            origin[0] + offset[0],
-            origin[1] + offset[1] + y,
-            Array.from({ length: size[0] }, () => color)
-          );
-        }
-      }
-    }
-
-    // Fill
-    if (resolvedPreset.color) {
-      const fillChar = resolvedPreset.color;
-      const hasFrame = !!resolvedPreset.frame;
-
-      const yStart = hasFrame ? 1 : 0;
-      const yEnd = hasFrame ? size[1] - 1 : size[1];
-      const xOffset = hasFrame ? 1 : 0;
-      const drawWidth = hasFrame ? size[0] - 2 : size[0];
-
-      if (drawWidth > 0) {
-        for (let y = yStart; y < yEnd; y++) {
-          setCharsAt(
-            state.buffer,
-            origin[0] + xOffset,
-            origin[1] + y,
-            Array.from({ length: drawWidth }, () => fillChar)
-          );
-        }
-      }
-    }
-
-    if (resolvedPreset.frame) {
-      const frameOptions = expandFrameOptions(resolvedPreset.frame)
-
-      if (frameOptions.corner) {
-        // Top-left corner
-        if (frameOptions.corner[0] !== null) {
-          setCharAt(
-            state.buffer,
-            origin[0],
-            origin[1],
-            frameOptions.corner[0],
-          )
-        }
-        // Top-right corner
-        if (frameOptions.corner[1] !== null) {
-          setCharAt(
-            state.buffer,
-            origin[0] + size[0] - 1,
-            origin[1],
-            frameOptions.corner[1],
-          )
-        }
-        // Bottom-right corner
-        if (frameOptions.corner[2] !== null) {
-          setCharAt(
-            state.buffer,
-            origin[0] + size[0] - 1,
-            origin[1] + size[1] - 1,
-            frameOptions.corner[2],
-          )
-        }
-        // Bottom-left corner
-        if (frameOptions.corner[3] !== null) {
-          setCharAt(
-            state.buffer,
-            origin[0],
-            origin[1] + size[1] - 1,
-            frameOptions.corner[3],
-          )
-        }
-      }
-
-      if (frameOptions.edge) {
-        // Top border
-        if (frameOptions.edge[0] !== null) {
-          setCharsAt(
-            state.buffer,
-            origin[0] + 1,
-            origin[1],
-            Array.from({ length: size[0] - 2 }, () => frameOptions.edge[0]!)
-          );
-        }
-        // Right border
-        if (frameOptions.edge[1] !== null) {
-          for (let i = 1; i < size[1] - 1; i++) {
-            setCharAt(
-              state.buffer,
-              origin[0] + size[0] - 1,
-              origin[1] + i,
-              frameOptions.edge[1]!
-            );
-          }
-        }
-        // Bottom border
-        if (frameOptions.edge[2] !== null) {
-          setCharsAt(
-            state.buffer,
-            origin[0] + 1,
-            origin[1] + size[1] - 1,
-            Array.from({ length: size[0] - 2 }, () => frameOptions.edge[2]!)
-          );
-        }
-        // Left border
-        if (frameOptions.edge[3] !== null) {
-          for (let i = 1; i < size[1] - 1; i++) {
-            setCharAt(
-              state.buffer,
-              origin[0],
-              origin[1] + i,
-              frameOptions.edge[3]!
-            );
-          }
-        }
-      }
-
-    }
+    paintBox(
+      state.buffer,
+      this.boxState.p1,
+      this.boxState.p2,
+      this.boxState.currentPreset,
+      state.fg,
+      state.bg
+    );
   }
 }
