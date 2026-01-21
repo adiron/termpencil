@@ -3,8 +3,9 @@
   import CodeModal from "./CodeModal.svelte";
   import OpenSaveModal from "./OpenSaveModal.svelte";
   import ResizeModal from "./ResizeModal.svelte";
+    import PaletteModal from "./PaletteModal.svelte";
 
-  type ModalName = undefined | "code" | "importexport" | "resize";
+  type ModalName = undefined | "code" | "importexport" | "resize" | "palette";
 
   let modal: ModalName = $state(undefined);
   const onclose = () => (modal = undefined);
@@ -14,6 +15,7 @@
 <CodeModal open={modal === "code"} {onclose} />
 <OpenSaveModal open={modal === "importexport"} {onclose} />
 <ResizeModal open={modal === "resize"} {onclose} />
+<PaletteModal open={modal === "palette"} {onclose} />
 
 <div class="menu">
   <div class="logo" title="termpencil">{TERM_PENCIL}</div>
@@ -23,7 +25,10 @@
   <button class="menu__button" onclick={() => (modal = "resize")}>Resize</button
   >
   <button class="menu__button" onclick={() => (modal = "code")}
-    >Terminal Preview</button
+    >Preview</button
+  >
+  <button class="menu__button" onclick={() => (modal = "palette")}
+    >Term Conf.</button
   >
 </div>
 
