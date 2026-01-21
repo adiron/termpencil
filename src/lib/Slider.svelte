@@ -1,14 +1,15 @@
 <script lang="ts">
-    import { mapRange } from "./utils";
+  import { mapRange } from "./utils";
 
   interface Props {
     value: number;
     min: number;
     max: number;
     formatFunction?: (n: number) => string;
+    step?: number;
   }
 
-  let { value = $bindable(), max, min, formatFunction }: Props = $props();
+  let { value = $bindable(), max, min, formatFunction, step }: Props = $props();
   let mouseDown = $state(false);
 
   $effect(() => {
@@ -29,6 +30,11 @@
     if (e.target !== e.currentTarget) return;
     const size = (e.target as HTMLDivElement).getBoundingClientRect();
     value = mapRange(e.clientX, size.left, size.right, min, max);
+
+    if (step) {
+      const vmidstep = value + step / 2;
+      value = vmidstep - (vmidstep % step);
+    }
   };
 </script>
 
@@ -38,8 +44,11 @@
   tabindex="0"
   class="container"
   onmousemove={handleMouse}
-  onmousedown={e => { mouseDown = true; handleMouse(e) }}
-  onmouseup={_ => mouseDown = false}
+  onmousedown={(e) => {
+    mouseDown = true;
+    handleMouse(e);
+  }}
+  onmouseup={(_) => (mouseDown = false)}
 >
   <div class="filled" style:--value={relativeValue}>&nbsp;</div>
   <div class="text">
