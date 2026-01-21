@@ -20,6 +20,8 @@ export interface DisplayImage {
   opacity: number;
 }
 
+export type PickerRange = [string,number,number]
+
 export interface GlobalState {
   buffer: ScreenBuffer;
   tool: Tool;
@@ -42,6 +44,8 @@ export interface GlobalState {
   editorHasKeyboard: boolean;
 
   editBuffer: ScreenBuffer<StyledChar | undefined>;
+
+  pickerRanges: PickerRange[]
 }
 
 // Utility to make tuple of the same type of length N.

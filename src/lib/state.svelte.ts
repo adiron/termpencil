@@ -9,6 +9,7 @@ import {
   DEFAULT_BG,
   DEFAULT_FG,
   DEFAULT_PALETTE,
+  DEFAULT_PICKER_RANGES,
 } from "./constants";
 import type { GlobalState } from "./types";
 import { CursorTool } from "./tools/CursorTool";
@@ -33,6 +34,7 @@ export let globalState: GlobalState = $state({
   },
   editorHasKeyboard: true,
   editBuffer: makeEmptyScreenBuffer<StyledChar | undefined>(80, 40, undefined),
+  pickerRanges: DEFAULT_PICKER_RANGES,
 });
 
 export function flushEditBuffer(state: GlobalState) {

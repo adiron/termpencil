@@ -1,37 +1,13 @@
 <script lang="ts">
-  import Cell from "./Cell.svelte";
+  import CharPickerRangeView from "./CharPickerRangeView.svelte";
   import { globalState } from "./state.svelte";
-
-  // Generate character ranges
-  const ranges = [
-    [0x20, 0x7e], // ASCII
-    [0x2580, 0x259f], // Block elements
-    [0x2500, 0x257f], // Box drawing
-  ];
-
-  let chars: number[] = [];
-  for (const [start, end] of ranges) {
-    for (let i = start; i <= end; i++) {
-      chars.push(i);
-    }
-  }
 </script>
 
 <div class="char-picker">
   <h3>Chars</h3>
-  <div class="char-grid">
-    {#each chars as char}
-      <Cell
-        fg={undefined}
-        bg={undefined}
-        onclick={() => (globalState.char = char)}
-        title={char.toString(16).toUpperCase().padStart(4, "0")}
-        {char}
-        selected={char === globalState.char}
-        size="lg"
-      />
-    {/each}
-  </div>
+  {#each globalState.pickerRanges as range}
+    <CharPickerRangeView {range} />
+  {/each}
 </div>
 
 <style lang="scss">
@@ -50,12 +26,5 @@
   h3 {
     position: sticky;
     top: 0;
-  }
-
-  .char-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(24px, 1fr));
-    gap: 4px;
-    padding: 0.5rem;
   }
 </style>

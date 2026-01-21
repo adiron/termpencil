@@ -1,3 +1,5 @@
+import type { PickerRange } from "./types";
+
 export const TERM_PENCIL = "<:::D"
 export const DEFAULT_FG = "#dddddd";
 export const DEFAULT_BG = "#0A0A0A";
@@ -263,4 +265,10 @@ export const EXTENDED_PALETTE = [
   "#dadada",
   "#e4e4e4",
   "#eeeeee",
-]
+];
+
+export const DEFAULT_PICKER_RANGES: PickerRange[] = [
+  ["ASCII", 0x20, 0x7e], // ASCII
+  ["BLOCK", 0x2580, 0x259f], // Block elements
+  ["BOX", 0x2500, 0x257f], // Box drawing
+];
