@@ -8,17 +8,25 @@ import { flushEditBuffer } from '../state.svelte';
 
 type PaintMode = "both" | "char" | "color"
 
+interface BrushState {
+  paintMode: PaintMode;
+  size: number;
+}
+
 export class BrushTool implements Tool {
   name = "brush";
-  paintMode = $state("both" as PaintMode);
+  brushState: BrushState = $state({
+    paintMode: "both",
+    size: 1
+  });
   showSelection = false;
   optionsComponent = BrushOptions;
 
-  onClick(index: number, state: GlobalState): void {
+  onClick(index: number, state: GlobalState, x: number, y: number): void {
     this.paint(index, state);
   }
 
-  onDrag(index: number, state: GlobalState): void {
+  onDrag(index: number, state: GlobalState, x: number, y: number): void {
     this.paint(index, state);
   }
 
@@ -41,26 +49,63 @@ export class BrushTool implements Tool {
   private paint(index: number, state: GlobalState): void {
     if (index < 0 || index >= state.buffer.chars.length) return;
 
-    // Read from existing buffer to preserve state (since overlay replaces)
-    const baseChar = state.buffer.chars[index];
-    const newChar = { ...baseChar };
+    const x = index % state.buffer.width;
+    const y = Math.floor(index / state.buffer.width);
 
-    // Check if we already have a char in editBuffer (accumulate changes)
-    const existingEditChar = state.editBuffer.chars[index];
-    if (existingEditChar) {
-      Object.assign(newChar, existingEditChar);
+    // Seeded with initial index because that's always true
+    let indices = [index];
+
+    if (this.brushState.size > 1) {
+      const bufferWidth = state.buffer.width;
+      const bufferHeight = Math.ceil(state.buffer.chars.length / state.buffer.width);
+
+      // These calculations are wrong:
+      const offsMin = Math.ceil(this.brushState.size / -2);
+      const offsMax = Math.ceil(this.brushState.size / 2);
+
+      const coords: [number, number][] = [];
+
+      for (let xOffset = offsMin; xOffset < offsMax; xOffset++) {
+        for (let yOffset = offsMin; yOffset < offsMax; yOffset++) {
+          const newCoord: [number, number] = [
+            xOffset + x,
+            yOffset + y,
+          ];
+          if (newCoord[0] < 0 ||
+            newCoord[1] < 0 ||
+            newCoord[0] > bufferWidth ||
+            newCoord[1] >= bufferHeight) {
+            continue;
+          }
+          coords.push(newCoord);
+        }
+      }
+
+      coords.forEach((coord) => {
+        indices.push(
+          coord[0] + (coord[1] * state.buffer.width)
+        );
+      });
+
+      indices = indices.filter(e => e < state.buffer.chars.length);
     }
 
-    if (this.paintMode === "both" || this.paintMode === "color") {
-      newChar.fg = state.fg;
-      newChar.bg = state.bg;
-    }
-    if ((this.paintMode === "both" || this.paintMode === "char")
-      && state.char !== null) {
-      newChar.codepoint = state.char;
+    for (let i = 0; i < indices.length; i++) {
+      const baseChar = state.buffer.chars[indices[i]];
+      const newChar = { ...baseChar };
+
+      if (this.brushState.paintMode === "both" || this.brushState.paintMode === "color") {
+        newChar.fg = state.fg;
+        newChar.bg = state.bg;
+      }
+      if ((this.brushState.paintMode === "both" || this.brushState.paintMode === "char")
+        && state.char !== null) {
+        newChar.codepoint = state.char;
+      }
+
+      // Write to editBuffer
+      state.editBuffer.chars[indices[i]] = newChar;
     }
 
-    // Write to editBuffer
-    state.editBuffer.chars[index] = newChar;
   }
 }
