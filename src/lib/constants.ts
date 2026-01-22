@@ -272,3 +272,5 @@ export const DEFAULT_PICKER_RANGES: PickerRange[] = [
   ["BLOCK", 0x2580, 0x259f], // Block elements
   ["BOX", 0x2500, 0x257f], // Box drawing
 ];
+
+export const HISTORY_MAX = 80;
