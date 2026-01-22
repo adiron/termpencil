@@ -35,7 +35,8 @@ export let globalState: GlobalState = $state({
   editorHasKeyboard: true,
   editBuffer: makeEmptyScreenBuffer<StyledChar | undefined>(80, 40, undefined),
   pickerRanges: DEFAULT_PICKER_RANGES,
-  font: "Courier New"
+  font: "Courier New",
+  showPicker: true,
 });
 
 export function flushEditBuffer(state: GlobalState) {

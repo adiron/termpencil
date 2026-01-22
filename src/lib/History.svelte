@@ -45,6 +45,7 @@
 <div class="history">
   {#each history.toReversed() as h}
     <Cell
+      size="lg"
       char={h.codepoint}
       fg={h.fg}
       bg={h.bg}
