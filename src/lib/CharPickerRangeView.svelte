@@ -5,9 +5,10 @@
 
   interface Props {
     range: PickerRange;
+    thin: boolean;
   }
 
-  const { range }: Props = $props();
+  const { range, thin }: Props = $props();
 
   let expanded = $state(true);
 
@@ -21,25 +22,27 @@
   });
 </script>
 
-<div
-  class="title"
-  role="button"
-  onclick={() => (expanded = !expanded)}
-  onkeydown={(e) => {
-    if (e.key === "Enter") {
-      expanded = !expanded;
-    }
-  }}
-  tabindex="0"
->
-  <span class="name">{expanded ? "\u25bc" : "\u25ba"} {range[0]}</span>
-  <span class="range">
-    0x{range[1].toString(16)} - 0x{range[2].toString(16)}
-  </span>
-</div>
+{#if !thin}
+  <div
+    class="title"
+    role="button"
+    onclick={() => (expanded = !expanded)}
+    onkeydown={(e) => {
+      if (e.key === "Enter") {
+        expanded = !expanded;
+      }
+    }}
+    tabindex="0"
+  >
+    <span class="name">{expanded ? "\u25bc" : "\u25ba"} {range[0]}</span>
+    <span class="range">
+      0x{range[1].toString(16)} - 0x{range[2].toString(16)}
+    </span>
+  </div>
+{/if}
 
-{#if expanded}
-  <div class="char-grid">
+{#if expanded || thin}
+  <div class="char-grid" class:thin>
     {#each chars as char}
       <Cell
         fg={undefined}
@@ -60,6 +63,10 @@
     grid-template-columns: repeat(auto-fill, minmax(24px, 1fr));
     gap: 4px;
     padding: 0.5rem;
+
+    &.thin {
+      padding-top: 3rem;
+    }
   }
 
   .title {

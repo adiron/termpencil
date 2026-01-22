@@ -116,6 +116,7 @@
 
 <style lang="scss">
   .toolbox {
+    width: 300px;
     grid-area: toolbox;
     display: flex;
     flex-direction: column;

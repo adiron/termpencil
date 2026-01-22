@@ -23,29 +23,34 @@ export interface DisplayImage {
 export type PickerRange = [string,number,number]
 
 export interface GlobalState {
+  // State
   buffer: ScreenBuffer;
   tool: Tool;
-  palette: string[];
+  fg: Color | undefined;
+  bg: Color | undefined;
+  char: number | null;
+  image: DisplayImage;
+  editorHasKeyboard: boolean;
+  editBuffer: ScreenBuffer<StyledChar | undefined>;
+  caret: number | null;
 
+  // Terminal display options
+  palette: string[];
   // These colors are the TERMINAL'S default.
   // They are what happens when the user has `undefined`
   // for the colors. (i.e. after reset)
   defaultFg: string;
   defaultBg: string;
-
   charSize: [number, number];
-  caret: number | null;
-  fg: Color | undefined;
-  bg: Color | undefined;
-  char: number | null;
+  // Name (for font-family)
+  font: string;
 
-  image: DisplayImage;
-
-  editorHasKeyboard: boolean;
-
-  editBuffer: ScreenBuffer<StyledChar | undefined>;
-
-  pickerRanges: PickerRange[]
+  // Other UI settings
+  // This is managed here because I will wnat to save this 
+  // and I do not want the component itself to handle this.
+  showPicker: boolean;
+  // likewise:
+  pickerRanges: PickerRange[];
 }
 
 // Utility to make tuple of the same type of length N.

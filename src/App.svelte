@@ -18,22 +18,24 @@
   });
 </script>
 
-<main style={styleString}>
+<main style={styleString} style:font-family={globalState.font}>
   <Menu />
   <Toolbox />
   <Editor />
   <CharPicker />
 </main>
 
-<style>
+<style lang="scss">
   main {
     grid-template-areas:
       "menu menu menu"
-      "toolbox editor charpicker";
-    grid-template-columns: 300px 1fr 300px;
+      "toolbox editor charpicker"
+      "history history history";
+    grid-template-columns: auto 1fr auto;
     grid-template-rows:
       40px
-      1fr;
+      1fr
+      40px;
     display: grid;
     height: 100vh;
     overflow: hidden;

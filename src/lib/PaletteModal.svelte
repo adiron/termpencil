@@ -34,6 +34,8 @@
       </div>
     {/each}
 
+    <input bind:value={globalState.font} />
+
     <div>
       <Button text="Close" onclick={onclose} />
       <Button
