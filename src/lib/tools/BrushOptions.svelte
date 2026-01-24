@@ -7,25 +7,30 @@
 </script>
 
 <div class="tool-options">
-  Paint Mode
-  <div class="mode-selector">
-    <Button
-      onclick={() => (tool.brushState.paintMode = "both")}
-      active={tool.brushState.paintMode === "both"}
-      text="Both"
-    />
-    <Button
-      onclick={() => (tool.brushState.paintMode = "color")}
-      active={tool.brushState.paintMode === "color"}
-      text="Color"
-    />
-    <Button
-      onclick={() => (tool.brushState.paintMode = "char")}
-      active={tool.brushState.paintMode === "char"}
-      text="Char"
-    />
+  <div>
+    Paint Mode
+    <div class="mode-selector">
+      <Button
+        onclick={() => (tool.brushState.paintMode = "both")}
+        active={tool.brushState.paintMode === "both"}
+        text="Both"
+      />
+      <Button
+        onclick={() => (tool.brushState.paintMode = "color")}
+        active={tool.brushState.paintMode === "color"}
+        text="Color"
+      />
+      <Button
+        onclick={() => (tool.brushState.paintMode = "char")}
+        active={tool.brushState.paintMode === "char"}
+        text="Char"
+      />
+    </div>
   </div>
-  <Slider bind:value={tool.brushState.size} min={1} max={5} step={1} />
+  <div>
+    Size
+    <Slider bind:value={tool.brushState.size} min={1} max={5} step={1} />
+  </div>
 </div>
 
 <style lang="scss">

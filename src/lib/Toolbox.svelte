@@ -8,14 +8,16 @@
   import Button from "./Button.svelte";
   import { OverlayTool } from "./tools/OverlayTool.svelte";
   import { BoxTool } from "./tools/BoxTool.svelte";
+  import { SprayTool } from "./tools/SprayTool.svelte";
 
   const { palette } = globalState;
 
   const TOOLS: [string, Tool][] = [
     ["Cursor", new CursorTool()],
     ["Brush", new BrushTool()],
-    ["Eyedropper", new EyedropperTool()],
+    ["Spray", new SprayTool()],
     ["Box", new BoxTool()],
+    ["Eyedropper", new EyedropperTool()],
     ["Overlay", new OverlayTool()],
   ];
 </script>

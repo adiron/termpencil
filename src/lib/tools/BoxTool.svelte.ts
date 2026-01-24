@@ -204,7 +204,7 @@ export function paintBox(
 
 
 export class BoxTool implements Tool {
-  name = "brush";
+  name = "box";
   showSelection = false;
   optionsComponent = BoxOptions;
 

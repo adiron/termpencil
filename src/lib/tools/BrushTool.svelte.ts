@@ -5,6 +5,7 @@
 import type { Tool, GlobalState } from '../types';
 import BrushOptions from './BrushOptions.svelte';
 import { flushEditBuffer } from '../state.svelte';
+import { setCharHelper } from '../utils';
 
 type PaintMode = "both" | "char" | "color"
 
@@ -31,15 +32,7 @@ export class BrushTool implements Tool {
   }
 
   onKeyDown(event: KeyboardEvent, state: GlobalState): void {
-    if (
-      !event.ctrlKey &&
-      !event.altKey &&
-      !event.metaKey &&
-      event.key.length === 1
-    ) {
-      state.char = event.key.codePointAt(0) || null;
-      event.preventDefault();
-    }
+    setCharHelper(event, state);
   }
 
   onMouseUp(index: number, state: GlobalState, x: number, y: number): void {
