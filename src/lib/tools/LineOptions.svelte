@@ -8,12 +8,6 @@
 
 <div class="tool-options">
   <div>
-    Character Source
-    <div class="mode-selector">
-    </div>
-  </div>
-
-  <div>
     Line Style
     <div class="style-selector">
       <Button
@@ -43,12 +37,6 @@
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-  }
-
-  .mode-selector {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
   }
 
   .style-selector {
