@@ -9,11 +9,11 @@ export class OverlayTool implements Tool {
 
   optionsComponent = OverlayOptions;
 
-  onClick(_index: number, _state: GlobalState, x: number, y: number): void {
+  onClick(_index: number, _state: GlobalState, x: number, y: number, _shiftKey?: boolean): void {
     this.lastMousePos = [x, y];
   }
 
-  onDrag(_index: number, state: GlobalState, x: number, y: number): void {
+  onDrag(_index: number, state: GlobalState, x: number, y: number, _shiftKey?: boolean): void {
     // Implement dragging to reposition
     const delta = [this.lastMousePos[0] - x, this.lastMousePos[1] - y];
     state.image.x -= delta[0];
@@ -21,7 +21,7 @@ export class OverlayTool implements Tool {
     this.lastMousePos = [x, y];
   }
 
-  onMouseUp(index: number, state: GlobalState, x: number, y: number): void {
+  onMouseUp(index: number, state: GlobalState, x: number, y: number, _shiftKey?: boolean): void {
     // nothing
   }
 
@@ -48,4 +48,3 @@ export class OverlayTool implements Tool {
     }
   }
 }
-

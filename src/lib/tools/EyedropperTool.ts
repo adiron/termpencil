@@ -3,11 +3,11 @@ import type { Tool, GlobalState } from '../types';
 export class EyedropperTool implements Tool {
   name = "eyedropper";
 
-  onClick(index: number, state: GlobalState): void {
+  onClick(index: number, state: GlobalState, _x: number, _y: number, _shiftKey?: boolean): void {
     this.sample(index, state);
   }
 
-  onDrag(index: number, state: GlobalState): void {
+  onDrag(index: number, state: GlobalState, _x: number, _y: number, _shiftKey?: boolean): void {
     this.sample(index, state);
   }
 
@@ -15,7 +15,7 @@ export class EyedropperTool implements Tool {
     // Eyedropper doesn't handle keyboard input
   }
 
-  onMouseUp(index: number, state: GlobalState, x: number, y: number): void {
+  onMouseUp(index: number, state: GlobalState, x: number, y: number, _shiftKey?: boolean): void {
     // nothing
   }
 

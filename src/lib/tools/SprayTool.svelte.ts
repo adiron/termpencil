@@ -19,15 +19,15 @@ export class SprayTool implements Tool {
     strength: 3,
   });
 
-  onClick(index: number, state: GlobalState, x: number, y: number): void {
+  onClick(index: number, state: GlobalState, x: number, y: number, _shiftKey?: boolean): void {
     this.paint(index, state);
   }
 
-  onMouseUp(index: number, state: GlobalState, x: number, y: number): void {
+  onMouseUp(index: number, state: GlobalState, x: number, y: number, _shiftKey?: boolean): void {
     flushEditBuffer(state);
   }
 
-  onDrag(index: number, state: GlobalState, x: number, y: number): void {
+  onDrag(index: number, state: GlobalState, x: number, y: number, _shiftKey?: boolean): void {
     this.paint(index, state);
   }
   onKeyDown(event: KeyboardEvent, state: GlobalState): void {

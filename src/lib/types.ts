@@ -5,9 +5,9 @@ import type { Component } from 'svelte';
 export interface Tool {
   name: string;
   optionsComponent?: Component<any>;
-  onClick(index: number, state: GlobalState, x: number, y: number): void;
-  onMouseUp(index: number, state: GlobalState, x: number, y: number): void;
-  onDrag(index: number, state: GlobalState, x: number, y: number): void;
+  onClick(index: number, state: GlobalState, x: number, y: number, shiftKey?: boolean): void;
+  onMouseUp(index: number, state: GlobalState, x: number, y: number, shiftKey?: boolean): void;
+  onDrag(index: number, state: GlobalState, x: number, y: number, shiftKey?: boolean): void;
   onKeyDown(event: KeyboardEvent, state: GlobalState): void;
   showSelection?: boolean;
 }

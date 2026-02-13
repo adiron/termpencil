@@ -216,7 +216,7 @@ export class BoxTool implements Tool {
     p2: undefined,
   })
 
-  onClick(index: number, state: GlobalState): void {
+  onClick(index: number, state: GlobalState, _x: number, _y: number, _shiftKey?: boolean): void {
     const x = index % state.buffer.width;
     const y = Math.floor(index / state.buffer.width);
     this.boxState.p1 = [x, y];
@@ -225,7 +225,7 @@ export class BoxTool implements Tool {
     state.editBuffer = makeEmptyScreenBuffer(state.buffer.width, getRowCount(state.buffer), undefined);
   }
 
-  onMouseUp(index: number, state: GlobalState): void {
+  onMouseUp(index: number, state: GlobalState, _x: number, _y: number, _shiftKey?: boolean): void {
     const x = index % state.buffer.width;
     const y = Math.floor(index / state.buffer.width);
     this.boxState.p2 = [x, y];
@@ -234,7 +234,7 @@ export class BoxTool implements Tool {
     flushEditBuffer(state);
   }
 
-  onDrag(index: number, state: GlobalState): void {
+  onDrag(index: number, state: GlobalState, _x: number, _y: number, _shiftKey?: boolean): void {
     const x = index % state.buffer.width;
     const y = Math.floor(index / state.buffer.width);
     this.boxState.p2 = [x, y];

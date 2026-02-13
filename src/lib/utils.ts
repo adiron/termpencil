@@ -40,3 +40,7 @@ export function setCharHelper(event: KeyboardEvent, state: GlobalState): void {
       event.preventDefault();
     }
 }
+
+export function normalizeAngle(angle: number): number {
+  return ((angle % 360) + 360) % 360;
+}

@@ -4,11 +4,11 @@ export class CursorTool implements Tool {
   name = "cursor";
   showSelection = true;
 
-  onClick(index: number, state: GlobalState): void {
+  onClick(index: number, state: GlobalState, _x: number, _y: number, _shiftKey?: boolean): void {
     state.caret = index;
   }
 
-  onDrag(_index: number, _state: GlobalState): void {
+  onDrag(_index: number, _state: GlobalState, _x: number, _y: number, _shiftKey?: boolean): void {
     // Cursor tool doesn't do anything on drag for now
   }
 
@@ -38,7 +38,7 @@ export class CursorTool implements Tool {
     }
   }
 
-  onMouseUp(index: number, state: GlobalState, x: number, y: number): void {
+  onMouseUp(index: number, state: GlobalState, x: number, y: number, _shiftKey?: boolean): void {
 
   }
 

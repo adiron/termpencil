@@ -8,12 +8,14 @@
   import { OverlayTool } from "./tools/OverlayTool.svelte";
   import { BoxTool } from "./tools/BoxTool.svelte";
   import { SprayTool } from "./tools/SprayTool.svelte";
+  import { LineTool } from "./tools/LineTool.svelte";
   import CharColor from "./CharColor.svelte";
 
   const TOOLS: [string, Tool][] = [
     ["Cursor", new CursorTool()],
     ["Brush", new BrushTool()],
     ["Spray", new SprayTool()],
+    ["Line", new LineTool()],
     ["Box", new BoxTool()],
     ["Eyedropper", new EyedropperTool()],
     ["Overlay", new OverlayTool()],

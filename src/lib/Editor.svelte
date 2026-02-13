@@ -18,17 +18,17 @@
   function cellMouseOver(event: MouseEvent, idx: number) {
     hoverTarget = idx;
     if (isMouseDown) {
-      globalState.tool.onDrag(idx, globalState, event.clientX, event.clientY);
+      globalState.tool.onDrag(idx, globalState, event.clientX, event.clientY, event.shiftKey);
     }
   }
 
   function cellMouseClick(event: MouseEvent, idx: number) {
-    globalState.tool.onClick(idx, globalState, event.clientX, event.clientY);
+    globalState.tool.onClick(idx, globalState, event.clientX, event.clientY, event.shiftKey);
   }
 
   function cellMouseUp(event: MouseEvent, idx: number) {
     if (!globalState.tool.onMouseUp) return;
-    globalState.tool.onMouseUp(idx, globalState, event.clientX, event.clientY);
+    globalState.tool.onMouseUp(idx, globalState, event.clientX, event.clientY, event.shiftKey);
   }
 
   function handleKey(e: KeyboardEvent) {

@@ -1,7 +1,3 @@
-// This is in a Svelte file because the paintChar property needs to 
-// be reactive in order to be bound in the UI. This has no real 
-// downside afaik so...
-
 import type { Tool, GlobalState } from '../types';
 import BrushOptions from './BrushOptions.svelte';
 import { flushEditBuffer } from '../state.svelte';
@@ -23,11 +19,11 @@ export class BrushTool implements Tool {
   showSelection = false;
   optionsComponent = BrushOptions;
 
-  onClick(index: number, state: GlobalState, x: number, y: number): void {
+  onClick(index: number, state: GlobalState, x: number, y: number, _shiftKey?: boolean): void {
     this.paint(index, state);
   }
 
-  onDrag(index: number, state: GlobalState, x: number, y: number): void {
+  onDrag(index: number, state: GlobalState, x: number, y: number, _shiftKey?: boolean): void {
     this.paint(index, state);
   }
 
@@ -35,7 +31,7 @@ export class BrushTool implements Tool {
     setCharHelper(event, state);
   }
 
-  onMouseUp(index: number, state: GlobalState, x: number, y: number): void {
+  onMouseUp(index: number, state: GlobalState, x: number, y: number, _shiftKey?: boolean): void {
     flushEditBuffer(state);
   }
 
