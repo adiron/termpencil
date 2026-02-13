@@ -64,21 +64,32 @@
 
 <style lang="scss">
   .cell {
-    display: table-cell;
-    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     outline-width: 1px;
     outline-style: solid;
     outline-color: transparent;
+    outline-offset: -1px;
     height: calc(var(--height) * 1px);
     width: calc(var(--width) * 1px);
-    line-height: 100%;
+    min-width: calc(var(--width) * 1px);
+    min-height: calc(var(--height) * 1px);
+    max-width: calc(var(--width) * 1px);
+    max-height: calc(var(--height) * 1px);
+    box-sizing: border-box;
+    line-height: calc(var(--height) * 1px);
     font-size: 1rem;
 
     &--lg {
       font-size: 1.5rem;
       height: calc(var(--height) * 1.5px);
       width: calc(var(--width) * 1.5px);
-      line-height: 1.5rem;
+      min-width: calc(var(--width) * 1.5px);
+      min-height: calc(var(--height) * 1.5px);
+      max-width: calc(var(--width) * 1.5px);
+      max-height: calc(var(--height) * 1.5px);
+      line-height: calc(var(--height) * 1.5px);
     }
 
     &:hover {

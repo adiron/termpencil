@@ -43,7 +43,7 @@
     <div class="row">
       {#each { length: buffer.width }, colI}
         {@const idx = colI + rowI * buffer.width}
-        {#if idx <= buffer.chars.length}
+        {#if idx < buffer.chars.length}
           {@const baseChar = getCharAt(buffer, colI, rowI)}
           {@const editChar = editBuffer
             ? getCharAt(editBuffer, colI, rowI)
@@ -72,21 +72,27 @@
 <style lang="scss">
   .display {
     outline: 1px solid var(--color-14);
-    display: inline-block;
+    display: inline-flex;
+    flex-direction: column;
     position: relative;
     user-select: none;
     overflow: hidden;
   }
 
   .row {
-    display: table-row;
+    display: flex;
     height: calc(var(--height) * 1px);
   }
 
   .cell--transparent {
-    display: table-cell;
+    display: inline-flex;
     width: calc(var(--width) * 1px);
     height: calc(var(--height) * 1px);
+    min-width: calc(var(--width) * 1px);
+    min-height: calc(var(--height) * 1px);
+    max-width: calc(var(--width) * 1px);
+    max-height: calc(var(--height) * 1px);
+    box-sizing: border-box;
     background-image: linear-gradient(45deg, #ccc 25%, transparent 25%),
       linear-gradient(-45deg, #ccc 25%, transparent 25%),
       linear-gradient(45deg, transparent 75%, #ccc 75%),
