@@ -1,4 +1,5 @@
-import type { GlobalState } from "./types";
+// This extension is required because of the CLI tool
+import type { GlobalState } from "./types.js";
 
 export function mapRange(value: number, low1: number, high1: number, low2: number, high2: number) {
   return low2 + (high2 - low2) * ((value - low1) / (high1 - low1));

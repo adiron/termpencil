@@ -1,4 +1,5 @@
-import { concatUint8Arrays } from "./utils";
+// This extension is required because of the CLI tool
+import { concatUint8Arrays } from "./utils.js";
 
 export const DEFAULT_CHAR: StyledChar = { codepoint: null, fg: undefined, bg: undefined };
 

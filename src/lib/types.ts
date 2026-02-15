@@ -1,4 +1,5 @@
-import type { ScreenBuffer, StyledChar, Color } from "./screenbuffer";
+// This extension is required because of the CLI tool
+import type { ScreenBuffer, StyledChar, Color } from "./screenbuffer.js";
 
 import type { Component } from 'svelte';
 
