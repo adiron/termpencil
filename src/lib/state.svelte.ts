@@ -49,7 +49,6 @@ export function flushEditBuffer(state: GlobalState) {
   // Add current buffer to undo stack
   state.undoBuffers.push(copyScreenBuffer(state.buffer));
   if (state.undoBuffers.length >= BUFFER_HISTORY_MAX) {
-    console.log("Flushing old undos")
     state.undoBuffers.splice(0, state.undoBuffers.length - BUFFER_HISTORY_MAX);
   }
 

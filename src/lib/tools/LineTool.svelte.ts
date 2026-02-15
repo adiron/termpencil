@@ -171,7 +171,6 @@ export class LineTool implements Tool {
     const y = Math.floor(index / state.buffer.width);
     this.lineState.p1 = [x, y];
     this.lineState.p2 = shiftKey ? [x, y] : undefined;
-    state.editBuffer = makeEmptyScreenBuffer(state.buffer.width, getRowCount(state.buffer), undefined);
   }
 
   onDrag(index: number, state: GlobalState, _x: number, _y: number, shiftKey?: boolean): void {

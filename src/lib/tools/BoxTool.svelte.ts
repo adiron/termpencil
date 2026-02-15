@@ -221,8 +221,6 @@ export class BoxTool implements Tool {
     const y = Math.floor(index / state.buffer.width);
     this.boxState.p1 = [x, y];
     this.boxState.p2 = undefined;
-    // Clear preview when starting new click sequence if needed
-    state.editBuffer = makeEmptyScreenBuffer(state.buffer.width, getRowCount(state.buffer), undefined);
   }
 
   onMouseUp(index: number, state: GlobalState, _x: number, _y: number, _shiftKey?: boolean): void {
