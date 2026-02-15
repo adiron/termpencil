@@ -120,26 +120,22 @@
     grid-area: editor;
     flex: 1;
     display: flex;
-    overflow: hidden;
+    overflow: auto;
   }
 
   .editor-area {
     flex: 1;
-    overflow: hidden;
     display: flex;
     justify-content: center;
-    align-items: center;
-    position: relative;
+    padding: 1rem;
+    box-sizing: border-box;
+    min-width: min-content;
   }
 
   .editor-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 100%;
-    overflow: auto;
-    padding: 1rem;
-    box-sizing: border-box;
   }
 
   .display-wrapper {
