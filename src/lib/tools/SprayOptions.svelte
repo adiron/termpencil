@@ -16,8 +16,4 @@
 </div>
 
 <style lang="scss">
-  .mode-selector {
-    display: flex;
-    flex-direction: row;
-  }
 </style>
