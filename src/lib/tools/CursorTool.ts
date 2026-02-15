@@ -1,3 +1,5 @@
+import type { StyledChar } from '../screenbuffer';
+import { flushEditBuffer } from '../state.svelte';
 import type { Tool, GlobalState } from '../types';
 
 export class CursorTool implements Tool {
@@ -24,15 +26,20 @@ export class CursorTool implements Tool {
     } else if (event.key === "ArrowUp") {
       this.moveSelect(-state.buffer.width, state);
     } else if (
+      // Presumably this case should filter out typable chars
       !event.ctrlKey &&
       !event.altKey &&
       !event.metaKey &&
       event.key.length === 1
     ) {
-      const char = state.buffer.chars[state.caret];
-      char.codepoint = event.key.codePointAt(0) || null;
-      char.fg = state.fg;
-      char.bg = state.bg;
+      // const char = state.buffer.chars[state.caret];
+      const char: StyledChar = {
+        codepoint: event.key.codePointAt(0) || null,
+        fg: state.fg,
+        bg: state.bg,
+      };
+      state.editBuffer.chars[state.caret] = char;
+      flushEditBuffer(state);
       this.moveSelect(1, state);
       event.preventDefault();
     }

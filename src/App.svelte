@@ -2,7 +2,7 @@
   import CharPicker from "./lib/CharPicker.svelte";
   import { EXTENDED_PALETTE } from "./lib/constants";
   import Editor from "./lib/Editor.svelte";
-    import History from "./lib/History.svelte";
+  import ColorHistory from "./lib/ColorHistory.svelte";
   import Menu from "./lib/Menu.svelte";
   import { globalState } from "./lib/state.svelte";
   import Toolbox from "./lib/Toolbox.svelte";
@@ -24,7 +24,7 @@
   <Toolbox />
   <Editor />
   <CharPicker />
-  <History />
+  <ColorHistory />
 </main>
 
 <style lang="scss">

@@ -34,6 +34,7 @@ export interface GlobalState {
   editorHasKeyboard: boolean;
   editBuffer: ScreenBuffer<StyledChar | undefined>;
   caret: number | null;
+  undoBuffers: ScreenBuffer[];
 
   // Terminal display options
   palette: string[];

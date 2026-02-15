@@ -1,6 +1,6 @@
 <script lang="ts">
   import Cell from "./Cell.svelte";
-  import { HISTORY_MAX } from "./constants";
+  import { COLOR_HISTORY_MAX } from "./constants";
   import type { StyledChar } from "./screenbuffer";
   import { globalState } from "./state.svelte";
 
@@ -36,8 +36,8 @@
       history.push(a)
     }
 
-    if (history.length >= HISTORY_MAX) {
-      history.splice(0, history.length - HISTORY_MAX);
+    if (history.length >= COLOR_HISTORY_MAX) {
+      history.splice(0, history.length - COLOR_HISTORY_MAX);
     }
   });
 </script>

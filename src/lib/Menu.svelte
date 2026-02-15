@@ -3,13 +3,15 @@
   import CodeModal from "./CodeModal.svelte";
   import OpenSaveModal from "./OpenSaveModal.svelte";
   import ResizeModal from "./ResizeModal.svelte";
-    import PaletteModal from "./PaletteModal.svelte";
+  import PaletteModal from "./PaletteModal.svelte";
+  import { globalState, undo } from "./state.svelte";
 
   type ModalName = undefined | "code" | "importexport" | "resize" | "palette";
 
   let modal: ModalName = $state(undefined);
   const onclose = () => (modal = undefined);
 
+  const endOfHistory = $derived(globalState.undoBuffers.length === 0);
 </script>
 
 <CodeModal open={modal === "code"} {onclose} />
@@ -24,9 +26,15 @@
   >
   <button class="menu__button" onclick={() => (modal = "resize")}>Resize</button
   >
-  <button class="menu__button" onclick={() => (modal = "code")}
-    >Preview</button
+  <button
+    class="menu__button"
+    class:menu__button--disabled={endOfHistory}
+    disabled={endOfHistory}
+    onclick={() => undo(globalState, 0)}
   >
+    Undo
+  </button>
+  <button class="menu__button" onclick={() => (modal = "code")}>Preview</button>
   <button class="menu__button" onclick={() => (modal = "palette")}
     >Term Conf.</button
   >
@@ -50,9 +58,19 @@
     background: transparent;
     font-family: inherit;
     text-transform: uppercase;
-  }
-  .menu__button:hover {
-    background: var(--color-4);
+
+    &--disabled, &:disabled {
+      color: var(--color-8);
+      cursor: not-allowed;
+
+      &:hover {
+        background: none;
+      }
+    }
+
+    &:hover {
+      background: var(--color-4);
+    }
   }
 
   .logo {

@@ -6,6 +6,7 @@ import {
   DEFAULT_CHAR,
 } from "./screenbuffer";
 import {
+    BUFFER_HISTORY_MAX,
   DEFAULT_BG,
   DEFAULT_FG,
   DEFAULT_PALETTE,
@@ -37,10 +38,36 @@ export let globalState: GlobalState = $state({
   pickerRanges: DEFAULT_PICKER_RANGES,
   font: "Courier New",
   showPicker: true,
+  undoBuffers: [],
 });
 
+// This is generally called on mouse up or similar.
+// This will add the current `editBuffer` to the `buffer` and increase undo depth. (to a mx of BUFFER_HISTORY_MAX)
 export function flushEditBuffer(state: GlobalState) {
+  // Add current buffer to undo stack
+  state.undoBuffers.push(state.buffer);
+  if (state.undoBuffers.length >= BUFFER_HISTORY_MAX) {
+    state.undoBuffers.splice(0, state.undoBuffers.length - BUFFER_HISTORY_MAX);
+  }
+
+  // Set current buffer to a composite
   state.buffer = mergeScreenBuffers(state.buffer, state.editBuffer);
-  // Reset
+  // Reset editBuffer to empty.
   state.editBuffer = makeEmptyScreenBuffer(state.buffer.width, getRowCount(state.buffer), undefined);
+}
+
+export function undo(state: GlobalState, depth: number = 0) {
+  if (depth < 0) {
+    return;
+  }
+  if (depth >= state.undoBuffers.length) {
+    return;
+  }
+
+  console.log("Undoing")
+  const newHead = state.undoBuffers[state.undoBuffers.length - depth - 1];
+  const newUndoBuffers = state.undoBuffers.slice(0, state.undoBuffers.length - depth - 1);
+
+  state.buffer = newHead;
+  state.undoBuffers = newUndoBuffers;
 }

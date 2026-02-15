@@ -273,4 +273,5 @@ export const DEFAULT_PICKER_RANGES: PickerRange[] = [
   ["BOX", 0x2500, 0x257f], // Box drawing
 ];
 
-export const HISTORY_MAX = 80;
+export const BUFFER_HISTORY_MAX = 10;
+export const COLOR_HISTORY_MAX = 80;
