@@ -1,11 +1,7 @@
 <script lang="ts">
   import Cell from "./Cell.svelte";
   import OverlayImage from "./OverlayImage.svelte";
-  import {
-    getCharAt,
-    getRowCount,
-    type StyledChar,
-  } from "./screenbuffer";
+  import type { StyledChar } from "./screenbuffer";
   import type { ScreenBuffer } from "./screenbuffer";
   import type { DisplayImage } from "./types";
 
@@ -34,63 +30,46 @@
   }: Props = $props();
 </script>
 
-<div class="display" style:--width={charSize[0]} style:--height={charSize[1]}>
+<div class="display" style:--width={charSize[0]} style:--height={charSize[1]} style:--cols={buffer.width}>
   {#if image && image.data}
     <OverlayImage {...image} />
   {/if}
-  {#each { length: getRowCount(buffer) }, rowI}
-    <div class="row">
-      {#each { length: buffer.width }, colI}
-        {@const idx = colI + rowI * buffer.width}
-        {#if idx < buffer.chars.length}
-          {@const baseChar = getCharAt(buffer, colI, rowI)}
-          {@const editChar = editBuffer
-            ? getCharAt(editBuffer, colI, rowI)
-            : undefined}
-          {@const styledChar = editChar ?? baseChar}
-
-          {#if styledChar === undefined}
-            <div class="cell cell--transparent"></div>
-          {:else}
-            <Cell
-              fg={styledChar.fg}
-              bg={styledChar.bg}
-              selected={showSelection && idx === caret}
-              onmouseover={onCellOver ? (e) => onCellOver(e, idx) : undefined}
-              onmousedown={onCellDown ? (e) => onCellDown(e, idx) : undefined}
-              onmouseup={onCellUp ? (e) => onCellUp(e, idx) : undefined}
-              char={styledChar.codepoint}
-            />
-          {/if}
-        {/if}
-      {/each}
-    </div>
+  {#each buffer.chars as char, idx (idx)}
+    {@const styledChar = editBuffer ? (editBuffer.chars[idx] ?? char) : char}
+    {#if styledChar === undefined}
+      <div class="cell cell--transparent"></div>
+    {:else}
+      <Cell
+        fg={styledChar.fg}
+        bg={styledChar.bg}
+        selected={showSelection && idx === caret}
+        onmouseover={onCellOver ? (e) => onCellOver(e, idx) : undefined}
+        onmousedown={onCellDown ? (e) => onCellDown(e, idx) : undefined}
+        onmouseup={onCellUp ? (e) => onCellUp(e, idx) : undefined}
+        char={styledChar.codepoint}
+      />
+    {/if}
   {/each}
 </div>
 
 <style lang="scss">
   .display {
     outline: 1px solid var(--color-14);
-    display: inline-flex;
-    flex-direction: column;
+    display: flex;
+    flex-wrap: wrap;
     position: relative;
     user-select: none;
     overflow: hidden;
+    width: calc(var(--width) * var(--cols) * 1px);
   }
 
-  .row {
-    display: flex;
+  .cell {
+    width: calc(var(--width) * 1px);
     height: calc(var(--height) * 1px);
+    flex-shrink: 0;
   }
 
   .cell--transparent {
-    display: inline-flex;
-    width: calc(var(--width) * 1px);
-    height: calc(var(--height) * 1px);
-    min-width: calc(var(--width) * 1px);
-    min-height: calc(var(--height) * 1px);
-    max-width: calc(var(--width) * 1px);
-    max-height: calc(var(--height) * 1px);
     box-sizing: border-box;
     background-image: linear-gradient(45deg, #ccc 25%, transparent 25%),
       linear-gradient(-45deg, #ccc 25%, transparent 25%),
