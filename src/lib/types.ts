@@ -10,6 +10,7 @@ export interface Tool {
   onMouseUp(index: number, state: GlobalState, x: number, y: number, shiftKey?: boolean): void;
   onDrag(index: number, state: GlobalState, x: number, y: number, shiftKey?: boolean): void;
   onKeyDown(event: KeyboardEvent, state: GlobalState): void;
+  onDeactivate?(state: GlobalState): void;
   showSelection?: boolean;
 }
 
@@ -27,6 +28,7 @@ export interface GlobalState {
   // State
   buffer: ScreenBuffer;
   tool: Tool;
+  previousTool: Tool | null;
   fg: Color | undefined;
   bg: Color | undefined;
   char: number | null;

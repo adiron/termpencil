@@ -47,7 +47,7 @@ export class SprayTool implements Tool {
       const y = Math.round((Math.cos(theta) * radius) + baseY);
       if (x < 0 || y < 0 || x >= state.buffer.width || y >= bufferHeight) continue;
 
-      setCharAt(state.buffer, x, y, {
+      setCharAt(state.editBuffer, x, y, {
         codepoint: state.char, fg: state.fg, bg: state.bg,
       });
     }

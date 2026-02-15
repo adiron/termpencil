@@ -13,12 +13,13 @@ import {
   DEFAULT_PALETTE,
   DEFAULT_PICKER_RANGES,
 } from "./constants";
-import type { GlobalState } from "./types";
+import type { GlobalState, Tool } from "./types";
 import { CursorTool } from "./tools/CursorTool";
 
 export let globalState: GlobalState = $state({
   buffer: makeEmptyScreenBuffer(80, 40, DEFAULT_CHAR),
   tool: new CursorTool(),
+  previousTool: null,
   palette: DEFAULT_PALETTE,
   defaultBg: DEFAULT_BG,
   defaultFg: DEFAULT_FG,
@@ -48,6 +49,7 @@ export function flushEditBuffer(state: GlobalState) {
   // Add current buffer to undo stack
   state.undoBuffers.push(copyScreenBuffer(state.buffer));
   if (state.undoBuffers.length >= BUFFER_HISTORY_MAX) {
+    console.log("Flushing old undos")
     state.undoBuffers.splice(0, state.undoBuffers.length - BUFFER_HISTORY_MAX);
   }
 
@@ -65,10 +67,19 @@ export function undo(state: GlobalState, depth: number = 0) {
     return;
   }
 
-  console.log("Undoing")
   const newHead = state.undoBuffers[state.undoBuffers.length - depth - 1];
   const newUndoBuffers = state.undoBuffers.slice(0, state.undoBuffers.length - depth - 1);
 
   state.buffer = newHead;
   state.undoBuffers = newUndoBuffers;
+}
+
+export function switchTool(state: GlobalState, newTool: Tool) {
+  if (state.previousTool !== newTool) {
+    if (state.previousTool?.onDeactivate) {
+      state.previousTool.onDeactivate(state);
+    }
+    state.previousTool = state.tool;
+    state.tool = newTool;
+  }
 }

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { globalState } from "./state.svelte";
+  import { globalState, switchTool } from "./state.svelte";
   import { CursorTool } from "./tools/CursorTool";
   import { BrushTool } from "./tools/BrushTool.svelte";
   import { EyedropperTool } from "./tools/EyedropperTool";
@@ -25,7 +25,7 @@
 {#snippet toolList()}
   {#each TOOLS as [name, tool]}
     <Button
-      onclick={() => (globalState.tool = tool)}
+      onclick={() => switchTool(globalState, tool)}
       active={globalState.tool === tool}
       text={name}
     />
