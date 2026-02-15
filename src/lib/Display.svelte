@@ -4,7 +4,6 @@
   import {
     getCharAt,
     getRowCount,
-    mergeScreenBuffers,
     type StyledChar,
   } from "./screenbuffer";
   import type { ScreenBuffer } from "./screenbuffer";

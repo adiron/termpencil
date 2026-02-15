@@ -148,10 +148,10 @@ export function makeEmptyScreenBuffer<T>(width: number, height: number, initialV
   };
 }
 
-export function mergeScreenBuffers<T>(
+export function mergeScreenBuffersInPlace<T>(
   base: ScreenBuffer<T>,
   overlay: ScreenBuffer<T | undefined>
-): ScreenBuffer<T> {
+): void {
   if (base.width !== overlay.width) {
     throw new Error(`Buffer widths do not match: ${base.width} vs ${overlay.width}`);
   }
@@ -159,16 +159,16 @@ export function mergeScreenBuffers<T>(
     throw new Error(`Buffer lengths do not match: ${base.chars.length} vs ${overlay.chars.length}`);
   }
 
-  const newChars = new Array(base.chars.length);
-
   for (let i = 0; i < base.chars.length; i++) {
     // If overlay[i] is NOT undefined, it strictly replaces base[i]
-    newChars[i] = overlay.chars[i] ?? base.chars[i];
+    base.chars[i] = overlay.chars[i] ?? base.chars[i];
   }
+}
 
+export function copyScreenBuffer<T>( buffer: ScreenBuffer<T>) : ScreenBuffer<T> {
   return {
-    chars: newChars,
-    width: base.width,
+    width: buffer.width,
+    chars: [ ...buffer.chars ],
   };
 }
 

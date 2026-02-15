@@ -1,12 +1,13 @@
 import {
   makeEmptyScreenBuffer,
-  mergeScreenBuffers,
   getRowCount,
   type StyledChar,
   DEFAULT_CHAR,
+  mergeScreenBuffersInPlace,
+  copyScreenBuffer,
 } from "./screenbuffer";
 import {
-    BUFFER_HISTORY_MAX,
+  BUFFER_HISTORY_MAX,
   DEFAULT_BG,
   DEFAULT_FG,
   DEFAULT_PALETTE,
@@ -45,13 +46,13 @@ export let globalState: GlobalState = $state({
 // This will add the current `editBuffer` to the `buffer` and increase undo depth. (to a mx of BUFFER_HISTORY_MAX)
 export function flushEditBuffer(state: GlobalState) {
   // Add current buffer to undo stack
-  state.undoBuffers.push(state.buffer);
+  state.undoBuffers.push(copyScreenBuffer(state.buffer));
   if (state.undoBuffers.length >= BUFFER_HISTORY_MAX) {
     state.undoBuffers.splice(0, state.undoBuffers.length - BUFFER_HISTORY_MAX);
   }
 
   // Set current buffer to a composite
-  state.buffer = mergeScreenBuffers(state.buffer, state.editBuffer);
+  mergeScreenBuffersInPlace(state.buffer, state.editBuffer);
   // Reset editBuffer to empty.
   state.editBuffer = makeEmptyScreenBuffer(state.buffer.width, getRowCount(state.buffer), undefined);
 }

@@ -6,7 +6,7 @@ import {
   setCharsAt,
   resizeScreenBuffer,
   setCharAt,
-  mergeScreenBuffers,
+  mergeScreenBuffersInPlace,
   type StyledChar,
   DEFAULT_CHAR
 } from './screenbuffer';
@@ -187,18 +187,18 @@ describe('generic screenbuffer features', () => {
     // Set overlay at index 1
     overlay.chars[1] = overlayChar;
 
-    const result = mergeScreenBuffers(base, overlay);
+    mergeScreenBuffersInPlace(base, overlay);
 
     // index 0 should be base (since overlay undefined)
-    expect(result.chars[0]).toEqual(baseChar);
+    expect(base.chars[0]).toEqual(baseChar);
     // index 1 should be overlay (strict replacement)
-    expect(result.chars[1]).toEqual(overlayChar);
+    expect(base.chars[1]).toEqual(overlayChar);
   });
 
   it('mergeScreenBuffers should throw if dimensions mismatch', () => {
     const base = makeEmptyScreenBuffer(2, 2, {});
     const overlay = makeEmptyScreenBuffer(3, 2, undefined);
 
-    expect(() => mergeScreenBuffers(base as any, overlay as any)).toThrow(/width/);
+    expect(() => mergeScreenBuffersInPlace(base as any, overlay as any)).toThrow(/width/);
   });
 });
