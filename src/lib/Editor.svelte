@@ -10,8 +10,8 @@
     globalState.caret === null
       ? [null, null]
       : [
-          globalState.caret % globalState.buffer.width,
-          Math.floor(globalState.caret / globalState.buffer.width),
+          globalState.caret % globalState.buffer[globalState.currentFrame].width,
+          Math.floor(globalState.caret / globalState.buffer[globalState.currentFrame].width),
         ],
   );
 
@@ -81,7 +81,7 @@
     <div class="editor-container">
       <div class="display-wrapper">
         <Display
-          buffer={globalState.buffer}
+          buffer={globalState.buffer[globalState.currentFrame]}
           editBuffer={globalState.editBuffer}
           charSize={globalState.charSize}
           caret={globalState.caret}
@@ -105,8 +105,8 @@
         {/if}
         {#if hoverTarget !== null}
           <span class="state">
-            (hovering: {hoverTarget % globalState.buffer.width},{Math.floor(
-              hoverTarget / globalState.buffer.width,
+            (hovering: {hoverTarget % globalState.buffer[globalState.currentFrame].width},{Math.floor(
+              hoverTarget / globalState.buffer[globalState.currentFrame].width,
             )} ({hoverTarget}))
           </span>
         {/if}

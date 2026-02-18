@@ -217,15 +217,15 @@ export class BoxTool implements Tool {
   })
 
   onClick(index: number, state: GlobalState, _x: number, _y: number, _shiftKey?: boolean): void {
-    const x = index % state.buffer.width;
-    const y = Math.floor(index / state.buffer.width);
+    const x = index % state.buffer[state.currentFrame].width;
+    const y = Math.floor(index / state.buffer[state.currentFrame].width);
     this.boxState.p1 = [x, y];
     this.boxState.p2 = undefined;
   }
 
   onMouseUp(index: number, state: GlobalState, _x: number, _y: number, _shiftKey?: boolean): void {
-    const x = index % state.buffer.width;
-    const y = Math.floor(index / state.buffer.width);
+    const x = index % state.buffer[state.currentFrame].width;
+    const y = Math.floor(index / state.buffer[state.currentFrame].width);
     this.boxState.p2 = [x, y];
 
     this.updatePreview(state);
@@ -233,8 +233,8 @@ export class BoxTool implements Tool {
   }
 
   onDrag(index: number, state: GlobalState, _x: number, _y: number, _shiftKey?: boolean): void {
-    const x = index % state.buffer.width;
-    const y = Math.floor(index / state.buffer.width);
+    const x = index % state.buffer[state.currentFrame].width;
+    const y = Math.floor(index / state.buffer[state.currentFrame].width);
     this.boxState.p2 = [x, y];
 
     this.updatePreview(state);
@@ -248,7 +248,7 @@ export class BoxTool implements Tool {
     if (this.boxState.currentPreset === null) return;
 
     // Reset edit buffer to transparent
-    state.editBuffer = makeEmptyScreenBuffer(state.buffer.width, getRowCount(state.buffer), undefined);
+    state.editBuffer = makeEmptyScreenBuffer(state.buffer[state.currentFrame].width, getRowCount(state.buffer[state.currentFrame]), undefined);
 
     paintBox(
       state.editBuffer,

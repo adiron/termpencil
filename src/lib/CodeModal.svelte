@@ -11,7 +11,8 @@
 
   let { open, onclose }: Props = $props();
 
-  const script = $derived(generateShellScript(globalState.buffer));
+  // TODO: Support multi-frame export
+  const script = $derived(generateShellScript(globalState.buffer[globalState.currentFrame]));
 
   const downloadScript = () => {
     const blob = new Blob([script], { type: "application/x-sh" });

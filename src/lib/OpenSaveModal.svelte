@@ -15,7 +15,7 @@
     reader.onload = (e) => {
       try {
         const buffer = new Uint8Array(reader.result as ArrayBuffer);
-        globalState.buffer = screenBufferFromBinary(buffer);
+        globalState.buffer = [screenBufferFromBinary(buffer)];
         onclose();
       } catch (err) {
         error = (err as Error).message;
@@ -36,7 +36,8 @@
   });
 
   const getBinary = () => {
-    const binary = screenBufferToBinary(globalState.buffer);
+    // TODO: Support multi-frame save
+    const binary = screenBufferToBinary(globalState.buffer[globalState.currentFrame]);
     const blob = new Blob([binary as unknown as BlobPart], {
       type: "application/octet-stream",
     });

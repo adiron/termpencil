@@ -167,22 +167,22 @@ export class LineTool implements Tool {
   });
 
   onClick(index: number, state: GlobalState, _x: number, _y: number, shiftKey?: boolean): void {
-    const x = index % state.buffer.width;
-    const y = Math.floor(index / state.buffer.width);
+    const x = index % state.buffer[state.currentFrame].width;
+    const y = Math.floor(index / state.buffer[state.currentFrame].width);
     this.lineState.p1 = [x, y];
     this.lineState.p2 = shiftKey ? [x, y] : undefined;
   }
 
   onDrag(index: number, state: GlobalState, _x: number, _y: number, shiftKey?: boolean): void {
-    const x = index % state.buffer.width;
-    const y = Math.floor(index / state.buffer.width);
+    const x = index % state.buffer[state.currentFrame].width;
+    const y = Math.floor(index / state.buffer[state.currentFrame].width);
     this.lineState.p2 = this.getEndpointWithConstraint([x, y], state, !!shiftKey);
     this.updatePreview(state);
   }
 
   onMouseUp(index: number, state: GlobalState, _x: number, _y: number, shiftKey?: boolean): void {
-    const x = index % state.buffer.width;
-    const y = Math.floor(index / state.buffer.width);
+    const x = index % state.buffer[state.currentFrame].width;
+    const y = Math.floor(index / state.buffer[state.currentFrame].width);
 
     if (!this.lineState.p1) return;
 
@@ -202,7 +202,7 @@ export class LineTool implements Tool {
       ? (LINE_STYLES.find((s) => s.id === this.lineState.currentStyleId) ?? null)
       : null;
 
-    state.editBuffer = makeEmptyScreenBuffer(state.buffer.width, getRowCount(state.buffer), undefined);
+    state.editBuffer = makeEmptyScreenBuffer(state.buffer[state.currentFrame].width, getRowCount(state.buffer[state.currentFrame]), undefined);
 
     paintLine(
       state.editBuffer,
@@ -224,10 +224,10 @@ export class LineTool implements Tool {
     if (!useConstraint || !this.lineState.p1) return p2;
 
     const snapped = snapToEightDirections(this.lineState.p1, p2, state.charSize);
-    const height = getRowCount(state.buffer);
+    const height = getRowCount(state.buffer[state.currentFrame]);
 
     return [
-      Math.max(0, Math.min(state.buffer.width - 1, snapped[0])),
+      Math.max(0, Math.min(state.buffer[state.currentFrame].width - 1, snapped[0])),
       Math.max(0, Math.min(height - 1, snapped[1])),
     ];
   }

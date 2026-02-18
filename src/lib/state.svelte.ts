@@ -17,7 +17,7 @@ import type { GlobalState, Tool } from "./types";
 import { CursorTool } from "./tools/CursorTool";
 
 export let globalState: GlobalState = $state({
-  buffer: makeEmptyScreenBuffer(80, 40, DEFAULT_CHAR),
+  buffer: [makeEmptyScreenBuffer(80, 40, DEFAULT_CHAR)],
   tool: new CursorTool(),
   previousTool: null,
   palette: DEFAULT_PALETTE,
@@ -25,6 +25,8 @@ export let globalState: GlobalState = $state({
   defaultFg: DEFAULT_FG,
   charSize: [10, 18],
   caret: null,
+  currentFrame: 0,
+
   fg: undefined,
   bg: undefined,
   char: null,
@@ -46,16 +48,23 @@ export let globalState: GlobalState = $state({
 // This is generally called on mouse up or similar.
 // This will add the current `editBuffer` to the `buffer` and increase undo depth. (to a mx of BUFFER_HISTORY_MAX)
 export function flushEditBuffer(state: GlobalState) {
-  // Add current buffer to undo stack
-  state.undoBuffers.push(copyScreenBuffer(state.buffer));
+  const bufCopy = copyScreenBuffer(state.buffer[state.currentFrame]);
+  
+  if (state.undoBuffers.length === 0) {
+    state.undoBuffers.push(state.buffer.map(frame => copyScreenBuffer(frame)));
+  } else {
+    state.undoBuffers.push([...state.undoBuffers[state.undoBuffers.length - 1]]);
+    state.undoBuffers[state.undoBuffers.length - 1][state.currentFrame] = bufCopy;
+  }
+
   if (state.undoBuffers.length >= BUFFER_HISTORY_MAX) {
     state.undoBuffers.splice(0, state.undoBuffers.length - BUFFER_HISTORY_MAX);
   }
 
   // Set current buffer to a composite
-  mergeScreenBuffersInPlace(state.buffer, state.editBuffer);
+  mergeScreenBuffersInPlace(state.buffer[state.currentFrame], state.editBuffer);
   // Reset editBuffer to empty.
-  state.editBuffer = makeEmptyScreenBuffer(state.buffer.width, getRowCount(state.buffer), undefined);
+  state.editBuffer = makeEmptyScreenBuffer(state.buffer[state.currentFrame].width, getRowCount(state.buffer[state.currentFrame]), undefined);
 }
 
 export function undo(state: GlobalState, depth: number = 0) {

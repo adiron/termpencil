@@ -35,9 +35,9 @@ export class SprayTool implements Tool {
   }
 
   private paint(index: number, state: GlobalState) {
-    const baseX = index % state.buffer.width;
-    const baseY = Math.floor(index / state.buffer.width);
-    const bufferHeight = Math.ceil(state.buffer.chars.length / state.buffer.width);
+    const baseX = index % state.buffer[state.currentFrame].width;
+    const baseY = Math.floor(index / state.buffer[state.currentFrame].width);
+    const bufferHeight = Math.ceil(state.buffer[state.currentFrame].chars.length / state.buffer[state.currentFrame].width);
 
     for (let i = 0; i < this.toolState.strength; i++) {
       const theta = randBetween(0, Math.PI * 2);
@@ -45,7 +45,7 @@ export class SprayTool implements Tool {
 
       const x = Math.round((Math.sin(theta) * radius) + baseX);
       const y = Math.round((Math.cos(theta) * radius) + baseY);
-      if (x < 0 || y < 0 || x >= state.buffer.width || y >= bufferHeight) continue;
+      if (x < 0 || y < 0 || x >= state.buffer[state.currentFrame].width || y >= bufferHeight) continue;
 
       setCharAt(state.editBuffer, x, y, {
         codepoint: state.char, fg: state.fg, bg: state.bg,

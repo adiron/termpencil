@@ -3,6 +3,8 @@ import type { ScreenBuffer, StyledChar, Color } from "./screenbuffer.js";
 
 import type { Component } from 'svelte';
 
+export type ScreenBufferFrames = ScreenBuffer[];
+
 export interface Tool {
   name: string;
   optionsComponent?: Component<any>;
@@ -26,7 +28,7 @@ export type PickerRange = [string,number,number]
 
 export interface GlobalState {
   // State
-  buffer: ScreenBuffer;
+  buffer: ScreenBufferFrames;
   tool: Tool;
   previousTool: Tool | null;
   fg: Color | undefined;
@@ -36,7 +38,8 @@ export interface GlobalState {
   editorHasKeyboard: boolean;
   editBuffer: ScreenBuffer<StyledChar | undefined>;
   caret: number | null;
-  undoBuffers: ScreenBuffer[];
+  undoBuffers: ScreenBufferFrames[];
+  currentFrame: number;
 
   // Terminal display options
   palette: string[];

@@ -20,8 +20,8 @@ export class EyedropperTool implements Tool {
   }
 
   private sample(index: number, state: GlobalState): void {
-    if (index < 0 || index >= state.buffer.chars.length) return;
-    const char = state.buffer.chars[index];
+    if (index < 0 || index >= state.buffer[state.currentFrame].chars.length) return;
+    const char = state.buffer[state.currentFrame].chars[index];
     state.fg = char.fg;
     state.bg = char.bg;
     state.char = char.codepoint;

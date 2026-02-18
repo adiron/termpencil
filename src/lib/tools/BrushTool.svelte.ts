@@ -36,17 +36,17 @@ export class BrushTool implements Tool {
   }
 
   private paint(index: number, state: GlobalState): void {
-    if (index < 0 || index >= state.buffer.chars.length) return;
+    if (index < 0 || index >= state.buffer[state.currentFrame].chars.length) return;
 
-    const x = index % state.buffer.width;
-    const y = Math.floor(index / state.buffer.width);
+    const x = index % state.buffer[state.currentFrame].width;
+    const y = Math.floor(index / state.buffer[state.currentFrame].width);
 
     // Seeded with initial index because that's always true
     let indices = [index];
 
     if (this.brushState.size > 1) {
-      const bufferWidth = state.buffer.width;
-      const bufferHeight = Math.ceil(state.buffer.chars.length / state.buffer.width);
+      const bufferWidth = state.buffer[state.currentFrame].width;
+      const bufferHeight = Math.ceil(state.buffer[state.currentFrame].chars.length / state.buffer[state.currentFrame].width);
 
       // These calculations are wrong:
       const offsMin = Math.ceil(this.brushState.size / -2);
@@ -72,15 +72,15 @@ export class BrushTool implements Tool {
 
       coords.forEach((coord) => {
         indices.push(
-          coord[0] + (coord[1] * state.buffer.width)
+          coord[0] + (coord[1] * state.buffer[state.currentFrame].width)
         );
       });
 
-      indices = indices.filter(e => e < state.buffer.chars.length);
+      indices = indices.filter(e => e < state.buffer[state.currentFrame].chars.length);
     }
 
     for (let i = 0; i < indices.length; i++) {
-      const baseChar = state.buffer.chars[indices[i]];
+      const baseChar = state.buffer[state.currentFrame].chars[indices[i]];
       const newChar = { ...baseChar };
 
       if (this.brushState.paintMode === "both" || this.brushState.paintMode === "color") {

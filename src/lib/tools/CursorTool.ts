@@ -24,9 +24,9 @@ export class CursorTool implements Tool {
     } else if (event.key === "ArrowLeft") {
       this.moveSelect(-1, state);
     } else if (event.key === "ArrowDown") {
-      this.moveSelect(state.buffer.width, state);
+      this.moveSelect(state.buffer[state.currentFrame].width, state);
     } else if (event.key === "ArrowUp") {
-      this.moveSelect(-state.buffer.width, state);
+      this.moveSelect(-state.buffer[state.currentFrame].width, state);
     } else if (
       !event.ctrlKey &&
       !event.altKey &&
@@ -72,9 +72,9 @@ export class CursorTool implements Tool {
 
   private moveSelect(n: number, state: GlobalState) {
     if (state.caret === null) return;
-    state.caret = (state.caret + n) % state.buffer.chars.length;
+    state.caret = (state.caret + n) % state.buffer[state.currentFrame].chars.length;
     if (state.caret < 0) {
-      state.caret = state.buffer.chars.length + state.caret;
+      state.caret = state.buffer[state.currentFrame].chars.length + state.caret;
     }
   }
 }
