@@ -1,6 +1,6 @@
 <script lang="ts">
+  import { animatedBufferToBinary, binaryToAnimatedBuffer } from "./binary";
   import Modal from "./Modal.svelte";
-  import { screenBufferToBinary, screenBufferFromBinary } from "./screenbuffer";
   import { globalState } from "./state.svelte";
 
   const { open, onclose } = $props();
@@ -15,7 +15,7 @@
     reader.onload = (e) => {
       try {
         const buffer = new Uint8Array(reader.result as ArrayBuffer);
-        globalState.buffer = [screenBufferFromBinary(buffer)];
+        globalState.buffer = binaryToAnimatedBuffer(buffer);
         onclose();
       } catch (err) {
         error = (err as Error).message;
@@ -36,8 +36,7 @@
   });
 
   const getBinary = () => {
-    // TODO: Support multi-frame save
-    const binary = screenBufferToBinary(globalState.buffer[globalState.currentFrame]);
+    const binary = animatedBufferToBinary(globalState.buffer);
     const blob = new Blob([binary as unknown as BlobPart], {
       type: "application/octet-stream",
     });

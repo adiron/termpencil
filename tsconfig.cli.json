@@ -12,5 +12,5 @@
     "noEmit": false,
     "outDir": "dist-cli"
   },
-  "include": ["scripts/**/*.ts", "src/lib/screenbuffer.ts", "src/lib/utils.ts"]
+  "include": ["scripts/**/*.ts", "src/lib/binary.ts", "src/lib/screenbuffer.ts", "src/lib/utils.ts"]
 }
