@@ -29,6 +29,8 @@
     box-sizing: border-box;
     border-left: 1px solid var(--color-8);
     padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
 
     &--collapsed {
       width: calc(3rem);
@@ -36,7 +38,8 @@
   }
 
   .chars {
-  max-height: 100%;
+    flex: 1;
+    min-height: 0;
     overflow-y: auto;
   }
 

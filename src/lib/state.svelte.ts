@@ -86,7 +86,7 @@ export function undo(state: GlobalState, depth: number = 0) {
 }
 
 export function switchTool(state: GlobalState, newTool: Tool) {
-  if (state.previousTool !== newTool) {
+  if (state.tool !== newTool) {
     if (state.previousTool?.onDeactivate) {
       state.previousTool.onDeactivate(state);
     }

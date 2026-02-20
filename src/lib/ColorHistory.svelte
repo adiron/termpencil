@@ -62,6 +62,8 @@
   .history {
     width: 100%;
     padding: 0.5rem 1rem;
+    box-sizing: border-box;
     grid-area: history;
+    border-top: 1px solid var(--color-8);
   }
 </style>
