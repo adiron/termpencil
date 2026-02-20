@@ -102,51 +102,60 @@
   });
 </script>
 
-<div class="wrapper">
-  <Frames />
-  <div class="editor-area">
-    <div class="editor-container">
-      <div class="display-wrapper">
-        <Display
-          buffer={globalState.buffer[globalState.currentFrame]}
-          editBuffer={globalState.editBuffer}
-          charSize={globalState.charSize}
-          caret={globalState.caret}
-          showSelection={globalState.tool.showSelection}
-          image={globalState.image}
-          onCellDown={cellMouseClick}
-          onCellUp={cellMouseUp}
-          onCellOver={cellMouseOver}
-        />
-      </div>
+<div class="panes">
+  <div class="wrapper">
+    <div class="editor-area">
+      <div class="editor-container">
+        <div class="display-wrapper">
+          <Display
+            buffer={globalState.buffer[globalState.currentFrame]}
+            editBuffer={globalState.editBuffer}
+            charSize={globalState.charSize}
+            caret={globalState.caret}
+            showSelection={globalState.tool.showSelection}
+            image={globalState.image}
+            onCellDown={cellMouseClick}
+            onCellUp={cellMouseUp}
+            onCellOver={cellMouseOver}
+          />
+        </div>
 
-      <div class="status">
-        {#if globalState.caret !== null}
-          <span class="state state__select">
-            caret: {caretX},{caretY} ({globalState.caret})
-          </span>
-        {:else}
-          <span class="state state__select state__select--empty">
-            (no selection)
-          </span>
-        {/if}
-        {#if hoverTarget !== null}
-          <span class="state">
-            (hovering: {hoverTarget %
-              globalState.buffer[globalState.currentFrame].width},{Math.floor(
-              hoverTarget / globalState.buffer[globalState.currentFrame].width,
-            )} ({hoverTarget}))
-          </span>
-        {/if}
+        <div class="status">
+          {#if globalState.caret !== null}
+            <span class="state state__select">
+              caret: {caretX},{caretY} ({globalState.caret})
+            </span>
+          {:else}
+            <span class="state state__select state__select--empty">
+              (no selection)
+            </span>
+          {/if}
+          {#if hoverTarget !== null}
+            <span class="state">
+              (hovering: {hoverTarget %
+                globalState.buffer[globalState.currentFrame].width},{Math.floor(
+                hoverTarget /
+                  globalState.buffer[globalState.currentFrame].width,
+              )} ({hoverTarget}))
+            </span>
+          {/if}
+        </div>
       </div>
     </div>
   </div>
+  <Frames />
 </div>
 
 <style lang="scss">
-  .wrapper {
-    flex-direction: column;
+  .panes {
     grid-area: editor;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    display: flex;
+    overflow: auto;
+  }
+  .wrapper {
     flex: 1;
     display: flex;
     overflow: auto;
