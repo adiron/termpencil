@@ -1,10 +1,10 @@
 import {
   makeEmptyScreenBuffer,
-  getRowCount,
   type StyledChar,
   DEFAULT_CHAR,
   mergeScreenBuffersInPlace,
   copyScreenBuffer,
+  clearScreenBuffer,
 } from "./screenbuffer";
 import {
   BUFFER_HISTORY_MAX,
@@ -63,8 +63,8 @@ export function flushEditBuffer(state: GlobalState) {
 
   // Set current buffer to a composite
   mergeScreenBuffersInPlace(state.buffer[state.currentFrame], state.editBuffer);
-  // Reset editBuffer to empty.
-  state.editBuffer = makeEmptyScreenBuffer(state.buffer[state.currentFrame].width, getRowCount(state.buffer[state.currentFrame]), undefined);
+  // Reset editBuffer to empty in-place to preserve object identity (avoids full Display re-render).
+  clearScreenBuffer(state.editBuffer, undefined);
 }
 
 export function undo(state: GlobalState, depth: number = 0) {

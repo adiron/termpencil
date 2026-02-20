@@ -163,6 +163,16 @@ export function mergeScreenBuffersInPlace<T>(
   }
 }
 
+export function clearScreenBuffer<T>(buffer: ScreenBuffer<T>, value: T): void {
+  if (typeof value === "object" && value !== null) {
+    for (let i = 0; i < buffer.chars.length; i++) {
+      buffer.chars[i] = { ...value } as T;
+    }
+  } else {
+    buffer.chars.fill(value);
+  }
+}
+
 export function copyScreenBuffer<T>( buffer: ScreenBuffer<T>) : ScreenBuffer<T> {
   return {
     width: buffer.width,

@@ -12,6 +12,7 @@
   let { open, onclose }: Props = $props();
 
   // TODO: Support multi-frame export
+  // Intentionally recomputes on every buffer change while the modal is open — only active when open.
   const script = $derived(generateShellScript(globalState.buffer[globalState.currentFrame]));
 
   const downloadScript = () => {
