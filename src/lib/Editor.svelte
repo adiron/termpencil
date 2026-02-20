@@ -2,6 +2,7 @@
   import { globalState } from "./state.svelte";
   import Display from "./Display.svelte";
   import { shiftColor } from "./utils.svelte";
+  import Frames from "./Frames.svelte";
 
   let hoverTarget: number | null = $state(null);
   let isMouseDown = $state(false);
@@ -77,6 +78,7 @@
 </script>
 
 <div class="wrapper">
+  <Frames />
   <div class="editor-area">
     <div class="editor-container">
       <div class="display-wrapper">
@@ -117,6 +119,7 @@
 
 <style lang="scss">
   .wrapper {
+    flex-direction: column;
     grid-area: editor;
     flex: 1;
     display: flex;
