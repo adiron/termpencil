@@ -1,6 +1,6 @@
 export const DEFAULT_CHAR: StyledChar = { codepoint: null, fg: undefined, bg: undefined };
 
-// Color is either a number (index in palette) or an RGB tuple
+// Color refers to the index of the color in the palette (0-255)
 export type Color = number;
 
 export interface StyledChar {
