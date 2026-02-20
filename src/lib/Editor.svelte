@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { globalState } from "./state.svelte";
+  import { globalState, flushEditBuffer } from "./state.svelte";
   import Display from "./Display.svelte";
   import { shiftColor } from "./utils.svelte";
   import Frames from "./Frames.svelte";
@@ -88,7 +88,10 @@
   $effect(() => {
     window.addEventListener("keydown", handleKey);
     const setMouseDown = () => (isMouseDown = true);
-    const setMouseUp = () => (isMouseDown = false);
+    const setMouseUp = () => {
+      isMouseDown = false;
+      flushEditBuffer(globalState);
+    };
     window.addEventListener("mousedown", setMouseDown);
     window.addEventListener("mouseup", setMouseUp);
     return () => {

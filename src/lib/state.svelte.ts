@@ -47,7 +47,10 @@ export let globalState: GlobalState = $state({
 
 // This is generally called on mouse up or similar.
 // This will add the current `editBuffer` to the `buffer` and increase undo depth. (to a mx of BUFFER_HISTORY_MAX)
+// Safe to call unconditionally — no-ops when the editBuffer has no painted cells.
 export function flushEditBuffer(state: GlobalState) {
+  if (!state.editBuffer.chars.some(c => c !== undefined)) return;
+
   const bufCopy = copyScreenBuffer(state.buffer[state.currentFrame]);
   
   if (state.undoBuffers.length === 0) {
