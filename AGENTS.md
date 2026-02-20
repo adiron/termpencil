@@ -25,6 +25,7 @@ Termpencil is a terminal/ASCII art editor built with Svelte 5, TypeScript, and S
 ## Code Style
 
 ### TypeScript
+- This is a TypeScript project. All implementation code should be written in TypeScript unless otherwise specified.
 - Use TypeScript for all files (`.ts` and `.svelte`)
 - Prefer explicit types over `any`
 - Use `type` for unions/intersections, `interface` for objects
@@ -92,6 +93,7 @@ export function getCharAt<T>(buffer: ScreenBuffer<T>, x: number, y: number): T {
 - Use Vitest with `describe`/`it`/`expect`
 - Name tests descriptively: `it('should encode and decode a buffer', ...)`
 - Use `toEqual` for deep equality, `toBe` for primitives
+- Test files should test files that they are named after, e.g. `somefile.test.ts` will test `somefile.ts`.
 
 ```typescript
 import { describe, it, expect } from 'vitest';
